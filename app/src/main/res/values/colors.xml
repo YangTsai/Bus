@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--App整体样式颜色-->
+    <color name="colorTheme">#1296db</color>
+    <!--App整体字体颜色-->
+    <color name="colorFont">#030303</color>
+    <!--其他颜色-->
+    <color name="colorGray">#8a8a8a</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="progress_off">#f3ad03</color>
+    <color name="button_yellow">#fda100</color>
+    <color name="light_blue">#663399CC</color>
+    <color name="bg_title">#58C5FE</color>
+    <color name="bg_color">#B0E2FF</color>
+    <color name="blue">#0000FF</color>
+    <color name="green">#00cd60</color>
+    <color name="transparent">#00000000</color>
+    <color name="translucence">#70000000</color>
+    <color name="title">#e89214</color>
+    <color name="gray">#eeeeee</color>
+    <color name="gray_font">#575C62</color>
+    <color name="line">#BDBDBD</color>
+    <color name="title_background">#f7f6f0</color>
+    <color name="person">#8080c0</color>
+    <color name="confirm">#FF8800</color>
+    <color name="info">#669900</color>
+    <color name="custom">#0099CC</color>
+    <color name="red">#FF0000</color>
+</resources>
