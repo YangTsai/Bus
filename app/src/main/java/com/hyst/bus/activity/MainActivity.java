@@ -30,10 +30,8 @@ import java.util.TimerTask;
  */
 
 public class MainActivity extends BaseActivity {
-    private FragmentManager fm;
     private boolean isExit;
     //   为每个fragment设置标签
-    private String[] tags = new String[]{"HomeFragment", "MessageFragment", "MyFragment"};
     private LinearLayout ll_home;
     private LinearLayout ll_route;
     private LinearLayout ll_map;

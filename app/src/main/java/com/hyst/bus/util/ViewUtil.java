@@ -56,5 +56,19 @@ public class ViewUtil {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         return recyclerView;
     }
-
+    /**
+     * 多行水平滑动RecyclerView
+     *
+     * @param context
+     * @param recyclerView
+     * @param row
+     * @return
+     */
+    public static RecyclerView getHRowsNoLine(Context context, RecyclerView recyclerView, int row) {
+        //设置layoutManager
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(row, StaggeredGridLayoutManager.HORIZONTAL));
+        //设置Item增加、移除动画
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        return recyclerView;
+    }
 }

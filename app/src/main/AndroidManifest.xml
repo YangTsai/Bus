@@ -45,10 +45,15 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.MainActivity"></activity>
+        <activity
+            android:name=".activity.MainActivity"
+            android:windowSoftInputMode="adjustPan">
+
+        </activity>
         <activity android:name=".activity.SetPointActivity"></activity>
         <activity android:name=".activity.RoutePlanActivity"></activity>
         <activity android:name=".activity.RouteDetailActivity"></activity>
+        <activity android:name=".activity.StationDetailActivity"></activity>
     </application>
 
 </manifest>

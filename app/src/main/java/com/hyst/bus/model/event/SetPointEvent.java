@@ -5,11 +5,13 @@ import android.os.Parcelable;
 
 import com.amap.api.services.core.LatLonPoint;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2018/1/16.
  */
 
-public class SetPointEvent implements Parcelable {
+public class SetPointEvent implements Parcelable,Serializable {
 
     //标签
     private String tag;
