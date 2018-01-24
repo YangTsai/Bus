@@ -18,11 +18,10 @@ import com.amap.api.services.route.WalkRouteResult;
 import com.hyst.bus.R;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
-import com.hyst.bus.model.HistoryCache;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.event.SetPointEvent;
-import com.hyst.bus.util.ACache;
 import com.hyst.bus.util.AMapUtil;
+import com.hyst.bus.util.HistoryCacheUtil;
 import com.hyst.bus.util.ToastUtil;
 import com.hyst.bus.util.ViewUtil;
 
@@ -83,8 +82,7 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
         if (startPoint == null && endPoint == null) {
             return;
         }
-        HistoryCache historyCache = new HistoryCache("address", startPoint, endPoint);
-        ACache.get(this).put("HistoryCache", historyCache);
+        HistoryCacheUtil.setCache(this,startPoint,endPoint);
         tv_start.setText(startPoint.getContent());
         tv_end.setText(endPoint.getContent());
         data = new ArrayList<>();
@@ -187,8 +185,6 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
             if (startPoint != null && endPoint != null) {
                 searchRoute(startPoint.getLatLonPoint(), endPoint.getLatLonPoint());
             }
-            HistoryCache historyCache = new HistoryCache("address", startPoint, endPoint);
-            ACache.get(this).put("HistoryCache", historyCache);
         }
     }
 

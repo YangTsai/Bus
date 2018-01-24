@@ -15,8 +15,10 @@
         <ImageView
             android:id="@+id/iv_back"
             android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/left" />
+            android:layout_height="50dp"
+            android:padding="15dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_back" />
 
         <ImageView
             android:layout_width="10dp"

@@ -14,14 +14,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="60dp"
         android:layout_marginTop="5dp"
         android:background="@color/white"
         android:orientation="horizontal">
 
         <EditText
             android:id="@+id/et_bus"
-            style="@style/text_ty"
+            style="@style/text_3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -37,9 +37,9 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
             android:background="@drawable/btn_re_white"
-            android:padding="6dp"
+            android:padding="5dp"
             android:text="一键查车"
-            android:textColor="@color/gray_font" />
+            android:textColor="@color/colorTheme" />
 
     </LinearLayout>
 
@@ -123,22 +123,136 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        style="@style/text_3"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="#F7F7F7"
-        android:gravity="center_vertical"
-        android:layout_marginTop="5dp"
-        android:paddingLeft="20dp"
-        android:text="历史记录"
-        android:textColor="@color/gray_font" />
+        android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    </android.support.v7.widget.RecyclerView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="5dp"
+                android:background="@color/white"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/text_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="20dp"
+                    android:text="锦业路"
+                    android:textColor="@color/gray_font" />
+
+                <TextView
+                    style="@style/text_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:padding="6dp"
+                    android:text="100米"
+                    android:textColor="@color/colorTheme" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:background="@color/white"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="center_vertical"
+                    android:src="@drawable/ic_bus" />
+
+                <TextView
+                    style="@style/text_3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:text="255路"
+                    android:textColor="@color/gray_font" />
+
+                <TextView
+                    style="@style/text_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:padding="6dp"
+                    android:text="2分钟"
+                    android:textColor="@color/gray_font" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:background="@color/white"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/text_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="20dp"
+                    android:text="下一站：南三环"
+                    android:textColor="@color/gray_font" />
+
+                <TextView
+                    style="@style/text_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:padding="6dp"
+                    android:text="10分钟"
+                    android:textColor="@color/gray_font" />
+            </RelativeLayout>
+
+            <TextView
+                style="@style/text_3"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:background="#F7F7F7"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="历史记录"
+                android:textColor="@color/gray_font" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:nestedScrollingEnabled="false">
+
+            </android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/tv_clear"
+                style="@style/text_3"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="20dp"
+                android:background="#F7F7F7"
+                android:paddingLeft="20dp"
+                android:text="清空历史记录"
+                android:textColor="@color/gray_font" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

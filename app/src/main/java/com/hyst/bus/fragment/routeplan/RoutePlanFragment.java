@@ -12,7 +12,7 @@ import com.amap.api.services.route.BusPath;
 import com.amap.api.services.route.BusStep;
 import com.hyst.bus.R;
 import com.hyst.bus.adapter.RecyclerAdapter;
-import com.hyst.bus.fragment.BaseLazyFragment;
+import com.hyst.bus.fragment.BaseFragment;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.SchemeBusStep;
 import com.hyst.bus.util.AMapUtil;
@@ -25,7 +25,7 @@ import java.util.List;
  * Created by Administrator on 2018/1/18.
  */
 
-public class RoutePlanFragment extends BaseLazyFragment {
+public class RoutePlanFragment extends BaseFragment {
 
     private TextView tv_route;
     private TextView tv_name;
@@ -47,18 +47,20 @@ public class RoutePlanFragment extends BaseLazyFragment {
         this.size = size;
     }
 
-    @Override
     protected void loadData() {
         if (busPath == null || busPath.getSteps() == null) {
             return;
         }
+        SchemeBusStep start = new SchemeBusStep(null);
+        start.setStart(true);
+        data.add(start);
         for (BusStep busStep : busPath.getSteps()) {
-            if (busStep.getWalk() != null && busStep.getWalk().getDistance() > 0) {
+            if (busStep.getWalk() != null && busStep.getWalk().getDistance() > 1) {
                 SchemeBusStep walk = new SchemeBusStep(busStep);
                 walk.setWalk(true);
                 data.add(walk);
             }
-            if (busStep.getBusLines() != null) {
+            if (busStep.getBusLine() != null) {
                 SchemeBusStep bus = new SchemeBusStep(busStep);
                 bus.setBus(true);
                 data.add(bus);
@@ -74,6 +76,9 @@ public class RoutePlanFragment extends BaseLazyFragment {
                 data.add(taxi);
             }
         }
+        SchemeBusStep end = new SchemeBusStep(null);
+        end.setEnd(true);
+        data.add(end);
         adapter.setDatas(data);
         //
         tv_route.setText("方案" + (currenPosition + 1));
@@ -105,6 +110,8 @@ public class RoutePlanFragment extends BaseLazyFragment {
                 holder.getView(R.id.ll_station).setVisibility(View.GONE);
                 holder.getView(R.id.v_line_start).setVisibility(View.VISIBLE);
                 holder.getView(R.id.v_line_end).setVisibility(View.VISIBLE);
+                LinearLayout ll_pass_station = holder.getView(R.id.ll_pass_station);
+                ll_pass_station.removeAllViews();
                 int position = holder.getAdapterPosition();
                 if (position == 0) {
                     holder.setText(R.id.tv_name, "起点");
@@ -125,16 +132,22 @@ public class RoutePlanFragment extends BaseLazyFragment {
                         holder.setText(R.id.tv_address, (step.getBusLines().get(0).getPassStationNum() + 1) + "站");
                         holder.setText(R.id.tv_name, step.getBusLines().get(0).getBusLineName());
                         List<BusStationItem> passStations = step.getBusLines().get(0).getPassStations();
+                        //上车站
+                        BusStationItem busStationItem = step.getBusLines().get(0).getDepartureBusStation();
+                        //下车站
+                        BusStationItem arrivalBusStation = step.getBusLines().get(0).getArrivalBusStation();
                         //
-                        LinearLayout ll_pass_station = holder.getView(R.id.ll_pass_station);
+                        passStations.add(0, busStationItem);
+                        passStations.add(arrivalBusStation);
                         for (int i = 0; i < passStations.size(); i++) {
                             TextView textView = new TextView(context);
-                            textView.setPadding(20,10,5,10);
+                            textView.setPadding(0, 10, 0, 10);
                             textView.setText(passStations.get(i).getBusStationName());
                             ll_pass_station.addView(textView);
                         }
                         holder.getView(R.id.ll_pass_station).setVisibility(View.GONE);
                         holder.getView(R.id.ll_station).setVisibility(View.VISIBLE);
+                        holder.setText(R.id.tv_station, "上：" + busStationItem.getBusStationName() + "\n下：" + arrivalBusStation.getBusStationName());
                     } else if (step.isRailway() && step.getRailway() != null) {
                         //地铁路线
                         holder.setImageResource(R.id.iv_type, R.drawable.ic_bus);
@@ -165,6 +178,7 @@ public class RoutePlanFragment extends BaseLazyFragment {
         };
         recyclerView = ViewUtil.getVRowsNoLine(context, recyclerView, 1);
         recyclerView.setAdapter(adapter);
+        loadData();
     }
 
     /**

@@ -14,10 +14,10 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
-            android:padding="2dp"
+            android:layout_marginLeft="10dp"
             android:src="@drawable/ic_search" />
 
 
@@ -28,7 +28,7 @@
 
             <TextView
                 android:id="@+id/tv_route"
-                style="@style/text_ty"
+                style="@style/text_3"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginLeft="10dp"
@@ -55,19 +55,19 @@
     <LinearLayout
         android:id="@+id/ll_search_address"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="50dp"
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
-            android:padding="2dp"
+            android:layout_marginLeft="10dp"
             android:src="@drawable/ic_search" />
 
         <TextView
             android:id="@+id/tv_name"
-            style="@style/text_ty"
+            style="@style/text_3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
@@ -76,4 +76,9 @@
             android:text="csdada"
             android:textColor="@color/gray_font" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"></View>
 </LinearLayout>

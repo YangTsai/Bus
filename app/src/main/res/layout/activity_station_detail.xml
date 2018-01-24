@@ -11,9 +11,11 @@
         android:background="@color/white">
 
         <ImageView
+            android:id="@+id/iv_back"
             android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/left" />
+            android:layout_height="50dp"
+            android:padding="15dp"
+            android:src="@drawable/ic_back" />
 
         <TextView
             android:id="@+id/tv_bus"
@@ -25,22 +27,23 @@
 
         <TextView
             android:id="@+id/tv_map"
-            style="@style/text_3"
+            style="@style/text_ty"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:text="地图" />
+            android:paddingRight="20dp"
+            android:text="地图"
+            android:textColor="@color/colorTheme" />
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="70dp"
         android:layout_marginTop="1dp"
         android:background="@color/white"
         android:orientation="vertical"
-        android:paddingLeft="20dp"
         android:paddingBottom="5dp"
+        android:paddingLeft="20dp"
         android:paddingRight="10dp">
 
 
@@ -50,8 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="2"
-            android:gravity="center_vertical"
-            android:text="暂未获取数据" />
+            android:gravity="center_vertical" />
 
         <TextView
             android:id="@+id/tv_detail"
@@ -60,7 +62,6 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="暂未获取数据"
             android:textColor="@color/gray_font" />
 
     </LinearLayout>
@@ -99,7 +100,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="满座" />
+                    android:text="满座"
+                    android:textColor="@color/colorTheme" />
             </LinearLayout>
 
             <TextView
@@ -136,7 +138,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="满座" />
+                    android:text="满座"
+                    android:textColor="@color/colorTheme" />
             </LinearLayout>
 
 
@@ -170,7 +173,8 @@
             android:layout_marginLeft="5dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="畅通" />
+            android:text="畅通"
+            android:textColor="@color/gray_font" />
 
         <View
             android:layout_width="40dp"
@@ -184,7 +188,8 @@
             android:layout_marginLeft="5dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="拥堵" />
+            android:text="拥堵"
+            android:textColor="@color/gray_font" />
 
         <View
             android:layout_width="40dp"
@@ -198,7 +203,8 @@
             android:layout_marginLeft="5dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="严重拥堵" />
+            android:text="严重拥堵"
+            android:textColor="@color/gray_font" />
     </LinearLayout>
 
     <LinearLayout
@@ -229,8 +235,9 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="30dp"
-        android:layout_weight="1">
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:layoutAnimation="@anim/layout_animation_fall_down">
 
     </android.support.v7.widget.RecyclerView>
 
@@ -241,6 +248,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tv_reverse"
             style="@style/text_3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -251,7 +259,9 @@
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="@color/gray"></View>
+
         <TextView
+            android:id="@+id/tv_refresh"
             style="@style/text_3"
             android:layout_width="0dp"
             android:layout_height="match_parent"

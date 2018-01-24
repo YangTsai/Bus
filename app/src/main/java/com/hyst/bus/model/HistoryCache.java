@@ -1,7 +1,5 @@
 package com.hyst.bus.model;
 
-import com.hyst.bus.model.event.SetPointEvent;
-
 import java.io.Serializable;
 
 /**
@@ -10,40 +8,73 @@ import java.io.Serializable;
 
 public class HistoryCache implements Serializable{
 
-    private String cacheType;
+    private String type;
 
-    private SetPointEvent startPoint;
+    private String startContent;
 
-    private SetPointEvent endPoint;
+    private double startLat;
 
+    private double startLon;
 
-    public HistoryCache(String cacheType, SetPointEvent startPoint, SetPointEvent endPoint) {
-        this.cacheType = cacheType;
-        this.startPoint = startPoint;
-        this.endPoint = endPoint;
+    private String endContent;
+
+    private double endLat;
+
+    private double endLon;
+
+    public String getType() {
+        return type;
     }
 
-    public String getCacheType() {
-        return cacheType;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public void setCacheType(String cacheType) {
-        this.cacheType = cacheType;
+    public String getStartContent() {
+        return startContent;
     }
 
-    public SetPointEvent getStartPoint() {
-        return startPoint;
+    public void setStartContent(String startContent) {
+        this.startContent = startContent;
     }
 
-    public void setStartPoint(SetPointEvent startPoint) {
-        this.startPoint = startPoint;
+    public double getStartLat() {
+        return startLat;
     }
 
-    public SetPointEvent getEndPoint() {
-        return endPoint;
+    public void setStartLat(double startLat) {
+        this.startLat = startLat;
     }
 
-    public void setEndPoint(SetPointEvent endPoint) {
-        this.endPoint = endPoint;
+    public double getStartLon() {
+        return startLon;
+    }
+
+    public void setStartLon(double startLon) {
+        this.startLon = startLon;
+    }
+
+    public String getEndContent() {
+        return endContent;
+    }
+
+    public void setEndContent(String endContent) {
+        this.endContent = endContent;
+    }
+
+    public void setEndLat(double endLat) {
+        this.endLat = endLat;
+    }
+
+    public double getEndLat() {
+        return endLat;
+    }
+
+    public void setEndLon(double endLon) {
+        this.endLon = endLon;
+    }
+
+    public double getEndLon() {
+        return endLon;
     }
 }

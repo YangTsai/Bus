@@ -35,4 +35,5 @@ dependencies {
     //网络请求
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.androidkun:XTabLayout:1.1.3'
+    compile 'me.weyye.hipermission:library:1.0.7'
 }

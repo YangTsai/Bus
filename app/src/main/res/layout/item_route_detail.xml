@@ -54,17 +54,27 @@
         <LinearLayout
             android:id="@+id/ll_station"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingBottom="5dp"
             android:paddingTop="5dp">
 
             <TextView
-                android:id="@+id/tv_address"
+                android:id="@+id/tv_station"
                 style="@style/text_3"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.5"
                 android:layout_weight="1"
+                android:textStyle="bold"
+                android:minHeight="30dp"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/tv_address"
+                style="@style/text_3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:textColor="@color/gray_font" />
 
@@ -85,7 +95,6 @@
             android:layout_marginBottom="5dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="5dp"
-            android:background="@drawable/btn_over_gray"
             android:orientation="vertical">
 
         </LinearLayout>
