@@ -137,8 +137,8 @@ public class MainActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SetPointEvent event) {
-        if (event != null && event.getTag().equals("HomeFragment")) {
-           homeFragment.setLocation(event);
+        if (event != null && event.getTag().equals("RouteFragment")) {
+            routeFragment.setLocation(event);
         }
     }
 
