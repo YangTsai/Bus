@@ -33,4 +33,5 @@
     <color name="station_green">#7FFF00</color>
     <color name="station_yellow">#FFFF00</color>
     <color name="station_red">#FF0000</color>
+    <color name="station_black">#242424</color>
 </resources>

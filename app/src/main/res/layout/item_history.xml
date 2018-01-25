@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/ll_search_route"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -55,7 +55,7 @@
     <LinearLayout
         android:id="@+id/ll_search_address"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -80,5 +80,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/gray"></View>
+        android:background="#F7F7F7"></View>
 </LinearLayout>

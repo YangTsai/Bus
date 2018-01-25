@@ -131,23 +131,25 @@ public class RoutePlanFragment extends BaseFragment {
                         holder.setImageResource(R.id.iv_type, R.drawable.ic_bus);
                         holder.setText(R.id.tv_address, (step.getBusLines().get(0).getPassStationNum() + 1) + "站");
                         holder.setText(R.id.tv_name, step.getBusLines().get(0).getBusLineName());
-                        List<BusStationItem> passStations = step.getBusLines().get(0).getPassStations();
+                        List<BusStationItem> passStations = new ArrayList<>();
+                        step.getBusLines().get(0).getPassStations();
                         //上车站
-                        BusStationItem busStationItem = step.getBusLines().get(0).getDepartureBusStation();
+                        BusStationItem departureBusStation = step.getBusLines().get(0).getDepartureBusStation();
                         //下车站
                         BusStationItem arrivalBusStation = step.getBusLines().get(0).getArrivalBusStation();
-                        //
-                        passStations.add(0, busStationItem);
+                        passStations.add(departureBusStation);
+                        passStations.addAll(step.getBusLines().get(0).getPassStations());
                         passStations.add(arrivalBusStation);
                         for (int i = 0; i < passStations.size(); i++) {
                             TextView textView = new TextView(context);
                             textView.setPadding(0, 10, 0, 10);
                             textView.setText(passStations.get(i).getBusStationName());
+                            textView.setTextColor(getResources().getColor(R.color.station_black));
                             ll_pass_station.addView(textView);
                         }
                         holder.getView(R.id.ll_pass_station).setVisibility(View.GONE);
                         holder.getView(R.id.ll_station).setVisibility(View.VISIBLE);
-                        holder.setText(R.id.tv_station, "上：" + busStationItem.getBusStationName() + "\n下：" + arrivalBusStation.getBusStationName());
+                        holder.setText(R.id.tv_station, "上：" + departureBusStation.getBusStationName() + "\n下：" + arrivalBusStation.getBusStationName());
                     } else if (step.isRailway() && step.getRailway() != null) {
                         //地铁路线
                         holder.setImageResource(R.id.iv_type, R.drawable.ic_bus);

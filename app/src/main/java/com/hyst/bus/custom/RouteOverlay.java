@@ -203,7 +203,7 @@ public class RouteOverlay {
 	 * @since V2.2.1
 	 */
 	protected int getBusColor() {
-		return Color.parseColor("#537edc");
+		return Color.parseColor("#00EE00");
 	}
 
 	protected int getDriveColor() {

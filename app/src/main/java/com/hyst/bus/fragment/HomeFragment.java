@@ -7,8 +7,10 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.amap.api.services.core.LatLonPoint;
 import com.hyst.bus.R;
 import com.hyst.bus.activity.RoutePlanActivity;
 import com.hyst.bus.activity.SetPointActivity;
@@ -21,6 +23,8 @@ import com.hyst.bus.model.event.SetPointEvent;
 import com.hyst.bus.util.HistoryCacheUtil;
 import com.hyst.bus.util.ToastUtil;
 import com.hyst.bus.util.ViewUtil;
+import com.liaoinstan.springview.container.AliHeader;
+import com.liaoinstan.springview.widget.SpringView;
 
 import java.util.List;
 
@@ -30,9 +34,11 @@ import java.util.List;
 
 public class HomeFragment extends BaseFragment {
 
+    private SpringView springView;
     private TextView tv_start;
     private TextView tv_end;
     private TextView tv_clear;
+    private LinearLayout ll_history;
     private EditText et_bus;
     private TextView tv_query_bus;
     private SetPointEvent startPoint = null;
@@ -56,21 +62,37 @@ public class HomeFragment extends BaseFragment {
         tv_end = view.findViewById(R.id.tv_end);
         iv_exchange = view.findViewById(R.id.iv_exchange);
         recyclerView = view.findViewById(R.id.recyclerView);
+        ll_history = view.findViewById(R.id.ll_history);
         tv_clear = view.findViewById(R.id.tv_clear);
+        springView = view.findViewById(R.id.springView);
         tv_query_bus.setOnClickListener(this);
         iv_exchange.setOnClickListener(this);
         tv_start.setOnClickListener(this);
         tv_end.setOnClickListener(this);
         tv_clear.setOnClickListener(this);
+        springView.setType(SpringView.Type.FOLLOW);
+        springView.setHeader(new AliHeader(context));
+        springView.setListener(new SpringView.OnFreshListener() {
+            @Override
+            public void onRefresh() {
+                updateData();
+                springView.onFinishFreshAndLoad();
+            }
+
+            @Override
+            public void onLoadmore() {
+
+            }
+        });
     }
 
     @Override
     protected void initData() {
         data = HistoryCacheUtil.getCache(context);
         if (data == null || data.size() == 0) {
-            tv_clear.setVisibility(View.GONE);
-        }else{
-            tv_clear.setVisibility(View.VISIBLE);
+            ll_history.setVisibility(View.GONE);
+        } else {
+            ll_history.setVisibility(View.VISIBLE);
         }
         adapter = new RecyclerAdapter<HistoryCache>(context, data, R.layout.item_history) {
             @Override
@@ -83,13 +105,16 @@ public class HomeFragment extends BaseFragment {
                 holder.setOnClickListener(R.id.tv_name, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        Intent intent = new Intent(context, RoutePlanActivity.class);
-//                        Bundle bundle = new Bundle();
-//                        SetPointEvent startPoint = new SetPointEvent("HomeFragment",ca);
-//                        bundle.putParcelable("startPoint", startPoint);
-//                        bundle.putParcelable("endPoint", endPoint);
-//                        intent.putExtras(bundle);
-//                        startActivity(intent);
+                        Intent intent = new Intent(context, RoutePlanActivity.class);
+                        Bundle bundle = new Bundle();
+                        SetPointEvent startPoint = new SetPointEvent("HomeFragment", Constant.POINT_TYPE_START_VALUE,
+                                cache.getStartContent(), new LatLonPoint(cache.getStartLat(), cache.getStartLon()));
+                        SetPointEvent endPoint = new SetPointEvent("HomeFragment", Constant.POINT_TYPE_END_VALUE,
+                                cache.getEndContent(), new LatLonPoint(cache.getEndLat(), cache.getEndLon()));
+                        bundle.putParcelable("startPoint", startPoint);
+                        bundle.putParcelable("endPoint", endPoint);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
                     }
                 });
             }
@@ -98,9 +123,19 @@ public class HomeFragment extends BaseFragment {
         recyclerView.setAdapter(adapter);
     }
 
+    private void updateData() {
+        data = HistoryCacheUtil.getCache(context);
+        if (data == null || data.size() == 0) {
+            ll_history.setVisibility(View.GONE);
+        } else {
+            ll_history.setVisibility(View.VISIBLE);
+        }
+        adapter.setDatas(data);
+    }
+
     @Override
     public void onClick(View view) {
-        Intent intent = null;
+        Intent intent;
         super.onClick(view);
         switch (view.getId()) {
             case R.id.iv_exchange:
@@ -143,7 +178,7 @@ public class HomeFragment extends BaseFragment {
                 HistoryCacheUtil.clearCache(context);
                 data.clear();
                 adapter.setDatas(data);
-                tv_clear.setVisibility(View.GONE);
+                ll_history.setVisibility(View.GONE);
                 break;
         }
     }
@@ -164,8 +199,6 @@ public class HomeFragment extends BaseFragment {
             bundle.putParcelable("endPoint", endPoint);
             intent.putExtras(bundle);
             startActivity(intent);
-            data = HistoryCacheUtil.getCache(context);
-            adapter.setDatas(data);
         }
 
     }
