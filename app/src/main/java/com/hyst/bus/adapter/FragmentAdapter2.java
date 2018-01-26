@@ -3,6 +3,8 @@ package com.hyst.bus.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.view.ViewGroup;
 
 import java.util.List;
 
@@ -15,6 +17,11 @@ public class FragmentAdapter2 extends FragmentStatePagerAdapter {
         super(fm);
         this.fm = fm;
         this.list = list;
+        FragmentTransaction transaction = fm.beginTransaction();
+        for (int i = 0; i < list.size(); i++) {
+            transaction.add(list.get(i),list.get(i).getTag());
+        }
+        transaction.commit();
     }
 
     /**
@@ -41,16 +48,21 @@ public class FragmentAdapter2 extends FragmentStatePagerAdapter {
         return titles.get(position);
     }
 
-//    @Override
-//    public Fragment instantiateItem(ViewGroup container, int position) {
-//        Fragment fragment = (Fragment) super.instantiateItem(container, position);
-//        fm.beginTransaction().show(fragment).commit();
-//        return fragment;
-//    }
-//
-//    @Override
-//    public void destroyItem(ViewGroup container, int position, Object object) {
-//        Fragment fragment = list.get(position);
-//        fm.beginTransaction().hide(fragment).commit();
-//    }
+    @Override
+    public Fragment instantiateItem(ViewGroup container, int position) {
+        Fragment fragment = (Fragment) super.instantiateItem(container, position);
+        if(fragment.isAdded()){
+            fm.beginTransaction().show(fragment).commitNow();
+        }else {
+//            fm.beginTransaction().add(container.getId(),fragment).commit();
+        }
+        return fragment;
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        super.destroyItem(container,position,object);
+        Fragment fragment = list.get(position);
+        fm.beginTransaction().hide(fragment).commit();
+    }
 }
