@@ -19,7 +19,12 @@ import com.amap.api.services.busline.BusStationItem;
 import com.amap.api.services.core.AMapException;
 import com.hyst.bus.R;
 import com.hyst.bus.adapter.RecyclerAdapter;
+import com.hyst.bus.constant.Constant;
 import com.hyst.bus.model.RecyclerHolder;
+import com.hyst.bus.model.cache.BusCache;
+import com.hyst.bus.model.cache.LocationCache;
+import com.hyst.bus.util.ACache;
+import com.hyst.bus.util.BusCacheUtil;
 import com.hyst.bus.util.ToastUtil;
 import com.hyst.bus.util.ViewUtil;
 
@@ -100,7 +105,12 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
     }
 
     private void searchBusLine() {
-        busLineQuery = new BusLineQuery(searchRoute, BusLineQuery.SearchType.BY_LINE_NAME, "西安市");
+        LocationCache event = (LocationCache) ACache.get(this).getAsObject(Constant.LOCATION_CONFIG);
+        String cityName = Constant.DEFAULT_CITY;
+        if (event != null) {
+            cityName = event.getCityName();
+        }
+        busLineQuery = new BusLineQuery(searchRoute, BusLineQuery.SearchType.BY_LINE_NAME, cityName);
         busLineQuery.setPageSize(10);
         busLineQuery.setPageNumber(1);
         busLineSearch = new BusLineSearch(this, busLineQuery);
@@ -139,18 +149,26 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
                         DateFormat df = new SimpleDateFormat("HH:mm");
                         String startTime = "";
                         String endTime = "";
-                        String price = "";
+                        double price = 0;
                         if (busLineItem.getFirstBusTime() != null && busLineItem.getLastBusTime() != null) {
                             startTime = df.format(busLineItem.getFirstBusTime());
                             endTime = df.format(busLineItem.getLastBusTime());
                         }
                         if (busLineItem.getBasicPrice() != 0) {
-                            price = busLineItem.getBasicPrice() + "";
+                            price = busLineItem.getBasicPrice();
                         }
                         tv_detail.setText("首班 " + startTime + "  末班 " + endTime + "  票价 " + price);
                         if (!TextUtils.isEmpty(busLineItem.getOriginatingStation()) && !TextUtils.isEmpty(busLineItem.getTerminalStation())) {
                             tv_name.setText(busLineItem.getOriginatingStation() + "---" + busLineItem.getTerminalStation());
                         }
+                        BusCache busCache = new BusCache();
+                        busCache.setBusName(searchRoute);
+                        busCache.setOriginationStation(busLineItem.getOriginatingStation());
+                        busCache.setTerminusStation(busLineItem.getTerminalStation());
+                        busCache.setStartTime(startTime);
+                        busCache.setEndTime(endTime);
+                        busCache.setPrice(price);
+                        BusCacheUtil.setCache(this, busCache);
                     }
                 }
             } else {
@@ -174,6 +192,7 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
                 break;
             case R.id.tv_map:
                 Intent intent = new Intent(this, BusMapActivity.class);
+                intent.putExtra("bus",searchRoute);
                 startActivity(intent);
                 break;
             case R.id.iv_back:

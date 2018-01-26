@@ -5,11 +5,48 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/tv_city_name"
         style="@style/text_ty"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@color/white"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/gray"></View>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
         android:background="@color/white"
-        android:text="西安市" />
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_bus"
+            style="@style/text_3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:gravity="center_vertical"
+            android:hint="查询公交、站点、线路"
+            android:inputType="number"
+            android:paddingLeft="30dp" />
+
+        <TextView
+            android:id="@+id/tv_query_bus"
+            style="@style/text_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/btn_re_white"
+            android:padding="5dp"
+            android:text="一键查车"
+            android:textColor="@color/colorTheme" />
+
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
@@ -32,43 +69,6 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:background="@color/white"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/et_bus"
-                        style="@style/text_3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@color/transparent"
-                        android:gravity="center_vertical"
-                        android:hint="查询公交、站点、线路"
-                        android:inputType="number"
-                        android:paddingLeft="30dp" />
-
-                    <TextView
-                        android:id="@+id/tv_query_bus"
-                        style="@style/text_3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="20dp"
-                        android:background="@drawable/btn_re_white"
-                        android:padding="5dp"
-                        android:text="一键查车"
-                        android:textColor="@color/colorTheme" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="5dp"
-                    android:background="@color/gray"></View>
-
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/re_bus"
                     android:layout_width="match_parent"
@@ -77,6 +77,11 @@
                     android:nestedScrollingEnabled="false">
 
                 </android.support.v7.widget.RecyclerView>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"
+                    android:background="@color/gray"></View>
 
                 <LinearLayout
                     android:id="@+id/ll_history"

@@ -14,14 +14,15 @@ import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.hyst.bus.R;
-import com.hyst.bus.activity.RoutePlanActivity;
 import com.hyst.bus.activity.StationDetailActivity;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
-import com.hyst.bus.model.HistoryCache;
+import com.hyst.bus.model.cache.BusCache;
+import com.hyst.bus.model.BusInfo;
+import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.model.RecyclerHolder;
-import com.hyst.bus.model.event.SetPointEvent;
-import com.hyst.bus.util.HistoryCacheUtil;
+import com.hyst.bus.util.ACache;
+import com.hyst.bus.util.BusCacheUtil;
 import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.ToastUtil;
 import com.hyst.bus.util.ViewUtil;
@@ -38,19 +39,21 @@ import java.util.List;
 public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchListener {
 
     private SpringView springView;
-    private TextView tv_clear;
-    private LinearLayout ll_history;
     private EditText et_bus;
+    private TextView tv_city_name;
     private TextView tv_query_bus;
     //
     private RecyclerView re_bus;
     private RecyclerAdapter adapter_bus;
-    private List<String> data_bus;
+    private List<BusInfo> data_bus;
     //
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
-    private List<HistoryCache> data;
+    private List<BusCache> data;
+    private LinearLayout ll_history;
+    private TextView tv_clear;
 
+    private PoiSearch.Query query;
     private PoiSearch poiSearch;
 
     @Override
@@ -60,6 +63,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
+        tv_city_name = view.findViewById(R.id.tv_city_name);
         et_bus = view.findViewById(R.id.et_bus);
         tv_query_bus = view.findViewById(R.id.tv_query_bus);
         re_bus = view.findViewById(R.id.re_bus);
@@ -89,32 +93,22 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
     @Override
     protected void initData() {
         data_bus = new ArrayList<>();
-        data = HistoryCacheUtil.getCache(context);
+        data = BusCacheUtil.getCache(context);
         if (data == null || data.size() == 0) {
             ll_history.setVisibility(View.GONE);
         } else {
             ll_history.setVisibility(View.VISIBLE);
         }
-        adapter = new RecyclerAdapter<HistoryCache>(context, data, R.layout.item_history) {
+        adapter = new RecyclerAdapter<BusCache>(context, data, R.layout.item_bus_history) {
             @Override
-            public void convert(final RecyclerHolder holder, final HistoryCache cache) {
-                if (cache.getType().equals("route")) {
-                    holder.getView(R.id.ll_search_address).setVisibility(View.VISIBLE);
-                    holder.getView(R.id.ll_search_route).setVisibility(View.GONE);
-                }
-                holder.setText(R.id.tv_name, cache.getStartContent() + "---" + cache.getEndContent());
-                holder.setOnClickListener(R.id.tv_name, new View.OnClickListener() {
+            public void convert(final RecyclerHolder holder, final BusCache cache) {
+                holder.setText(R.id.tv_name, cache.getBusName() + "路");
+                holder.setText(R.id.tv_address, cache.getOriginationStation() + "--" + cache.getTerminusStation());
+                holder.setOnClickListener(R.id.ll_search_address, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(context, RoutePlanActivity.class);
-                        Bundle bundle = new Bundle();
-                        SetPointEvent startPoint = new SetPointEvent("HomeFragment", Constant.POINT_TYPE_START_VALUE,
-                                cache.getStartContent(), new LatLonPoint(cache.getStartLat(), cache.getStartLon()));
-                        SetPointEvent endPoint = new SetPointEvent("HomeFragment", Constant.POINT_TYPE_END_VALUE,
-                                cache.getEndContent(), new LatLonPoint(cache.getEndLat(), cache.getEndLon()));
-                        bundle.putParcelable("startPoint", startPoint);
-                        bundle.putParcelable("endPoint", endPoint);
-                        intent.putExtras(bundle);
+                        Intent intent = new Intent(context, StationDetailActivity.class);
+                        intent.putExtra("bus", cache.getBusName());
                         startActivity(intent);
                     }
                 });
@@ -123,36 +117,41 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
         recyclerView = ViewUtil.getVRowsNoLine(context, recyclerView, 1);
         recyclerView.setAdapter(adapter);
         //
-        adapter_bus = new RecyclerAdapter<String>(context, data_bus, R.layout.item_home_bus) {
+        adapter_bus = new RecyclerAdapter<BusInfo>(context, data_bus, R.layout.item_home_bus) {
             @Override
-            public void convert(final RecyclerHolder holder, final String cache) {
+            public void convert(final RecyclerHolder holder, final BusInfo info) {
                 if (holder.getAdapterPosition() == 0) {
                     holder.getView(R.id.rl_address).setVisibility(View.VISIBLE);
                 } else {
                     holder.getView(R.id.rl_address).setVisibility(View.GONE);
                 }
-                holder.setText(R.id.tv_bus_one, cache);
+                holder.setText(R.id.tv_station_name, info.getStationName());
+                holder.setText(R.id.tv_bus_name, info.getBusName());
             }
         };
         re_bus = ViewUtil.getVRowsNoLine(context, re_bus, 1);
         re_bus.setAdapter(adapter_bus);
         //
-        PoiSearch.Query query = new PoiSearch.Query("公交车", "", "西安市");
-        query.setPageSize(1);// 设置每页最多返回多少条poiitem
-        query.setPageNum(1);//设置查询页码
-        poiSearch = new PoiSearch(context, query);
-        poiSearch.setOnPoiSearchListener(this);
-        LocationUtil.setLocation(context, "HomeFragment");
-
+        LocationCache event = (LocationCache) ACache.get(context).getAsObject(Constant.LOCATION_CONFIG);
+        if (event != null) {
+            tv_city_name.setText(event.getCityName());
+            String city = event.getCityName();
+            query = new PoiSearch.Query(Constant.POI_BUS, "", city);
+            query.setPageSize(1);// 设置每页最多返回多少条poiitem
+            query.setPageNum(1);//设置查询页码
+            poiSearch = new PoiSearch(context, query);
+            poiSearch.setOnPoiSearchListener(this);
+            //设置周边搜索的中心点以及半径
+            poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(event.getLatitude(), event.getLongitude()), 1000));
+            poiSearch.searchPOIAsyn();
+        } else {
+            LocationUtil.setLocation(context, "HomeFragment");
+        }
     }
 
-    public void setLocation(SetPointEvent event) {
-        poiSearch.setBound(new PoiSearch.SearchBound(event.getLatLonPoint(), 1000));//设置周边搜索的中心点以及半径
-        poiSearch.searchPOIAsyn();
-    }
 
     private void updateData() {
-        data = HistoryCacheUtil.getCache(context);
+        data = BusCacheUtil.getCache(context);
         if (data == null || data.size() == 0) {
             ll_history.setVisibility(View.GONE);
         } else {
@@ -176,7 +175,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
                 }
                 break;
             case R.id.tv_clear:
-                HistoryCacheUtil.clearCache(context);
+                BusCacheUtil.clearCache(context);
                 data.clear();
                 adapter.setDatas(data);
                 ll_history.setVisibility(View.GONE);
@@ -190,17 +189,24 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
             ArrayList<PoiItem> pois = poiResult.getPois();
             if (pois != null && pois.size() > 0) {
                 String snippet = pois.get(0).getSnippet();
+                String title = pois.get(0).getTitle();
                 if (!TextUtils.isEmpty(snippet)) {
                     if (snippet.contains(";")) {
                         String[] split = snippet.split(";");
                         for (int j = 0; j < split.length; j++) {
-                            data_bus.add(split[j]);
+                            BusInfo busInfo = new BusInfo();
+                            busInfo.setStationName(title);
+                            busInfo.setBusName(split[j]);
+                            data_bus.add(busInfo);
                             if (j == 1) {
                                 break;
                             }
                         }
                     } else {
-                        data_bus.add(snippet);
+                        BusInfo busInfo = new BusInfo();
+                        busInfo.setStationName(title);
+                        busInfo.setBusName(snippet);
+                        data_bus.add(busInfo);
                     }
                     adapter_bus.setDatas(data_bus);
                 }

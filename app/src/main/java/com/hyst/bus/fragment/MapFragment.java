@@ -1,23 +1,50 @@
 package com.hyst.bus.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.PolylineOptions;
+import com.amap.api.services.busline.BusLineItem;
+import com.amap.api.services.busline.BusLineQuery;
+import com.amap.api.services.busline.BusLineResult;
+import com.amap.api.services.busline.BusLineSearch;
+import com.amap.api.services.busline.BusStationItem;
+import com.amap.api.services.core.AMapException;
 import com.hyst.bus.R;
+import com.hyst.bus.constant.Constant;
+import com.hyst.bus.model.cache.LocationCache;
+import com.hyst.bus.util.ACache;
+import com.hyst.bus.util.ToastUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/1/16.
  */
 
-public class MapFragment extends BaseFragment{
+public class MapFragment extends BaseFragment implements BusLineSearch.OnBusLineSearchListener,
+        AMap.OnMapClickListener, AMap.InfoWindowAdapter {
     private MapView mapView;
     private AMap aMap;
     private EditText et_search;
+    private TextView tv_search;
+    //
+    private LocationCache locationCache;
+    private BusLineQuery busLineQuery;
+
+    private Marker mMarker;
 
     @Override
     protected int setLayoutId() {
@@ -26,38 +53,24 @@ public class MapFragment extends BaseFragment{
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        et_search =  view.findViewById(R.id.et_search);
-        mapView =  view.findViewById(R.id.map);
+        tv_search = view.findViewById(R.id.tv_search);
+        et_search = view.findViewById(R.id.et_search);
+        mapView = view.findViewById(R.id.map);
+        tv_search.setOnClickListener(this);
         mapView.onCreate(savedInstanceState);
-        et_search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-//                if (!TextUtils.isEmpty(et_search.getText().toString())) {
-//                    Intent intent = new Intent(context, StationDetailActivity.class);
-//                    intent.putExtra("bus", et_search.getText().toString());
-//                    startActivity(intent);
-//                } else {
-//                    ToastUtil.show(context, "请输入公交号");
-//                }
-            }
-        });
     }
 
     @Override
     protected void initData() {
         aMap = mapView.getMap();
         aMap.getUiSettings().setZoomControlsEnabled(false);
-//        aMap.moveCamera(CameraUpdateFactory.changeLatLng(Constants.XIAN));
+        aMap.setInfoWindowAdapter(this);
+        aMap.setOnMapClickListener(this);
+        locationCache = (LocationCache) ACache.get(context).getAsObject(Constant.LOCATION_CONFIG);
+        if (locationCache != null) {
+            aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(locationCache.getLatitude(), locationCache.getLongitude())));
+        }
+
     }
 
 
@@ -87,5 +100,80 @@ public class MapFragment extends BaseFragment{
         mapView.onDestroy();
     }
 
+    @Override
+    public void onClick(View view) {
+        super.onClick(view);
+        switch (view.getId()) {
+            case R.id.tv_search:
+                if (!TextUtils.isEmpty(et_search.getText().toString())) {
+                    busLineQuery = new BusLineQuery(et_search.getText().toString(), BusLineQuery.SearchType.BY_LINE_NAME, locationCache.getCityName());
+                    busLineQuery.setPageSize(10);
+                    busLineQuery.setPageNumber(1);
+                    BusLineSearch busLineSearch = new BusLineSearch(context, busLineQuery);
+                    busLineSearch.setOnBusLineSearchListener(this);
+                    busLineSearch.searchBusLineAsyn();
+                } else {
+                    ToastUtil.show(context, "请输入公交号");
+                }
+                break;
+        }
+    }
 
+    @Override
+    public void onBusLineSearched(BusLineResult result, int rCode) {
+        if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+            if (result != null && result.getQuery() != null
+                    && result.getQuery().equals(busLineQuery)) {
+                if (result.getQuery().getCategory() == BusLineQuery.SearchType.BY_LINE_NAME) {
+                    if (result.getPageCount() > 0 && result.getBusLines() != null
+                            && result.getBusLines().size() > 0) {
+                        List<BusLineItem> lines = result.getBusLines();
+                        BusLineItem busLineItem = lines.get(0);
+                        List<BusStationItem> busStations = busLineItem.getBusStations();
+                        List<LatLng> latLngs = new ArrayList<>();
+                        for (BusStationItem item : busStations) {
+                            LatLng latLng = new LatLng(item.getLatLonPoint().getLatitude(), item.getLatLonPoint().getLongitude());
+                            latLngs.add(latLng);
+                            aMap.moveCamera(CameraUpdateFactory.zoomTo(12));
+
+                            aMap.addMarker(new MarkerOptions().position(latLng).title(item.getBusStationName()).icon(
+                                    BitmapDescriptorFactory.fromResource(R.drawable.ic_red_round)));
+                        }
+                        aMap.addPolyline(new PolylineOptions().
+                                addAll(latLngs).width(20).color(Color.parseColor("#00EE00")));
+                    } else {
+                        ToastUtil.show(context, R.string.no_result);
+                    }
+                } else {
+                    ToastUtil.show(context, R.string.no_result);
+                }
+            } else {
+                ToastUtil.show(context, R.string.no_result);
+            }
+        } else {
+            ToastUtil.show(context, rCode);
+        }
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        if (mMarker != null) {
+            mMarker.hideInfoWindow();
+        }
+    }
+
+    @Override
+    public View getInfoWindow(Marker marker) {
+
+        return null;
+    }
+
+    @Override
+    public View getInfoContents(Marker marker) {
+        mMarker = marker;
+        View infoContent = getLayoutInflater().inflate(R.layout.layout_mark_info, null);
+        TextView tv_mark =  infoContent.findViewById(R.id.tv_mark);
+        tv_mark.setText(marker.getTitle());
+        return infoContent;
+    }
 }

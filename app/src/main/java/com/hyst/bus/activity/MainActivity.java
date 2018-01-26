@@ -139,8 +139,6 @@ public class MainActivity extends BaseActivity {
     public void onEvent(SetPointEvent event) {
         if (event != null && event.getTag().equals("RouteFragment")) {
             routeFragment.setLocation(event);
-        }else if (event != null && event.getTag().equals("HomeFragment")) {
-            homeFragment.setLocation(event);
         }
     }
 

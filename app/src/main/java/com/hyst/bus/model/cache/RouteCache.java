@@ -1,4 +1,4 @@
-package com.hyst.bus.model;
+package com.hyst.bus.model.cache;
 
 import java.io.Serializable;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by Administrator on 2018/1/23.
  */
 
-public class HistoryCache implements Serializable{
+public class RouteCache implements Serializable{
 
     private String type;
 

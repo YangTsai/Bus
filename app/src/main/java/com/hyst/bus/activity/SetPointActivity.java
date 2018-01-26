@@ -15,8 +15,10 @@ import com.amap.api.services.poisearch.PoiSearch;
 import com.hyst.bus.R;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
+import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.event.SetPointEvent;
+import com.hyst.bus.util.ACache;
 import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.ViewUtil;
 
@@ -67,6 +69,7 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
         iv_back.setOnClickListener(this);
         tv_location.setOnClickListener(this);
         iv_clear.setOnClickListener(this);
+        final LocationCache locationCache = (LocationCache) ACache.get(this).getAsObject(Constant.LOCATION_CONFIG);
         et_location.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -83,7 +86,11 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
                 int length = editable.toString().length();
                 if (length > 0) {
                     iv_clear.setVisibility(View.VISIBLE);
-                    setSearch(editable.toString(), "西安市");
+                    if (locationCache != null) {
+                        setSearch(editable.toString(), locationCache.getCityName());
+                    } else {
+                        setSearch(editable.toString(),Constant.DEFAULT_CITY);
+                    }
                 } else {
                     iv_clear.setVisibility(View.GONE);
                     adapter.setDatas(null);

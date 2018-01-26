@@ -9,6 +9,8 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.services.core.LatLonPoint;
 import com.hyst.bus.R;
+import com.hyst.bus.constant.Constant;
+import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.model.event.SetPointEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -55,12 +57,23 @@ public class LocationUtil {
                     aMapLocation.getAccuracy();//获取精度信息
                     aMapLocation.getAddress();
                     aMapLocation.getAoiName();
+                    //
                     SetPointEvent event = new SetPointEvent();
                     event.setTag(tag);
                     event.setContent(aMapLocation.getAoiName());
                     event.setLatLonPoint(new LatLonPoint(aMapLocation.getLatitude(), aMapLocation.getLongitude()));
                     EventBus.getDefault().post(event);
-                } else if(aMapLocation.getErrorCode() == 12){
+                    //
+                    LocationCache locationCache = new LocationCache();
+                    locationCache.setAoiName(aMapLocation.getAoiName());
+                    locationCache.setAddress(aMapLocation.getAddress());
+                    locationCache.setCityCode(aMapLocation.getCityCode());
+                    locationCache.setCityName(aMapLocation.getCity());
+                    locationCache.setLatitude(aMapLocation.getLatitude());
+                    locationCache.setLongitude(aMapLocation.getLongitude());
+                    ACache.get(context).put(Constant.LOCATION_CONFIG, locationCache);
+                } else if (aMapLocation.getErrorCode() == 12) {
+                    ACache.get(context).remove(Constant.LOCATION_CONFIG);
                     List<PermissionItem> permissionItems = new ArrayList<>();
                     permissionItems.add(new PermissionItem(Manifest.permission.ACCESS_FINE_LOCATION, "定位", R.drawable.permission_ic_location));
                     HiPermission.create(context)
@@ -69,7 +82,8 @@ public class LocationUtil {
                             .checkMutiPermission(new PermissionCallback() {
                                 @Override
                                 public void onClose() {
-
+                                    SetPointEvent event = new SetPointEvent();
+                                    EventBus.getDefault().post(event);
                                 }
 
                                 @Override

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/white"
-        android:text="西安市" />
+        android:text="路线" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -91,4 +91,55 @@
                 android:padding="6dp" />
         </LinearLayout>
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/gray"></View>
+
+    <com.liaoinstan.springview.widget.SpringView
+        android:id="@+id/springView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/ll_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/text_3"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#F7F7F7"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="历史记录"
+                android:textColor="@color/gray_font" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:nestedScrollingEnabled="false">
+
+            </android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/tv_clear"
+                style="@style/text_3"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:text="清空历史记录"
+                android:textColor="@color/gray_font" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="@color/gray"></View>
+        </LinearLayout>
+    </com.liaoinstan.springview.widget.SpringView>
 </LinearLayout>

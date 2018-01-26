@@ -25,6 +25,7 @@ public class SetPointEvent implements Parcelable,Serializable {
     //
     private LatLonPoint latLonPoint;
 
+
     public SetPointEvent(String tag,String pointType, String content,LatLonPoint latLonPoint) {
         this.tag = tag;
         this.type = pointType;
@@ -68,6 +69,7 @@ public class SetPointEvent implements Parcelable,Serializable {
         return tag;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -88,7 +90,7 @@ public class SetPointEvent implements Parcelable,Serializable {
         this.latLonPoint = in.readParcelable(LatLonPoint.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<SetPointEvent> CREATOR = new Parcelable.Creator<SetPointEvent>() {
+    public static final Creator<SetPointEvent> CREATOR = new Creator<SetPointEvent>() {
         @Override
         public SetPointEvent createFromParcel(Parcel source) {
             return new SetPointEvent(source);

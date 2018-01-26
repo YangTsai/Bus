@@ -1,6 +1,8 @@
 package com.hyst.bus.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -51,7 +53,7 @@ public class RouteDetailActivity extends BaseActivity implements AMap.OnMapLoade
     protected void initView() {
         mapView = findViewById(R.id.route_map);
         iv_back = findViewById(R.id.iv_back);
-        viewPager = findViewById(R.id.viewPager);
+        viewPager = findViewById(R.id.viewPager_route);
         mapView.onCreate(savedInstanceState);
         iv_back.setOnClickListener(this);
     }
@@ -105,24 +107,24 @@ public class RouteDetailActivity extends BaseActivity implements AMap.OnMapLoade
     private void setBottomSheet() {
         CoordinatorLayout coordinatorLayout = findViewById(R.id.cl_bottom);
         View bottomSheet = coordinatorLayout.findViewById(R.id.bottom_sheet);
-//        final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
-//        behavior.setPeekHeight(900);
-//        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-//        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-//            @Override
-//            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-//                //这里是bottomSheet 状态的改变，根据slideOffset可以做一些动画
-//                behavior.setPeekHeight(320);
-//                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-//                    behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-//                }
-//            }
-//
-//            @Override
-//            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-//                //这里是拖拽中的回调，根据slideOffset可以做一些动画
-//            }
-//        });
+        final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+        behavior.setPeekHeight(900);
+        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                //这里是bottomSheet 状态的改变，根据slideOffset可以做一些动画
+                behavior.setPeekHeight(320);
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                //这里是拖拽中的回调，根据slideOffset可以做一些动画
+            }
+        });
     }
 
     public void setMapData(BusPath busPath) {

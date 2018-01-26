@@ -4,7 +4,13 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
-
+    <!--启动页设置样式，防止白屏-->
+    <style name="WelcomeTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item  name="android:windowBackground">@drawable/qdy</item>
+    </style>
     <!-- 自定义text样式 start -->
     <style name="text_ty">
         <item name="android:textColor">@color/colorFont</item>

@@ -18,10 +18,12 @@ import com.amap.api.services.route.WalkRouteResult;
 import com.hyst.bus.R;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
+import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.event.SetPointEvent;
+import com.hyst.bus.util.ACache;
 import com.hyst.bus.util.AMapUtil;
-import com.hyst.bus.util.HistoryCacheUtil;
+import com.hyst.bus.util.RouteCacheUtil;
 import com.hyst.bus.util.ToastUtil;
 import com.hyst.bus.util.ViewUtil;
 
@@ -49,6 +51,9 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
     //
     private SetPointEvent startPoint;
     private SetPointEvent endPoint;
+    //
+    private RouteSearch routeSearch;
+    private RouteSearch.BusRouteQuery query;
 
 
     @Override
@@ -82,7 +87,7 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
         if (startPoint == null && endPoint == null) {
             return;
         }
-        HistoryCacheUtil.setCache(this,startPoint,endPoint);
+        RouteCacheUtil.setCache(this,startPoint,endPoint);
         tv_start.setText(startPoint.getContent());
         tv_end.setText(endPoint.getContent());
         data = new ArrayList<>();
@@ -106,6 +111,9 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
         };
         recyclerView = ViewUtil.getVRowsNoLine(this, recyclerView, 1);
         recyclerView.setAdapter(adapter);
+        //
+        routeSearch = new RouteSearch(this);
+        routeSearch.setRouteSearchListener(this);
         searchRoute(startPoint.getLatLonPoint(), endPoint.getLatLonPoint());
     }
 
@@ -114,10 +122,13 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
      * @param endPoint   终点
      */
     private void searchRoute(LatLonPoint startPoint, LatLonPoint endPoint) {
-        RouteSearch routeSearch = new RouteSearch(this);
-        routeSearch.setRouteSearchListener(this);
         RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(startPoint, endPoint);
-        RouteSearch.BusRouteQuery query = new RouteSearch.BusRouteQuery(fromAndTo, RouteSearch.BusLeaseWalk, "西安市", 0);
+        LocationCache locationCache = (LocationCache) ACache.get(this).getAsObject(Constant.LOCATION_CONFIG);
+        String city = Constant.DEFAULT_CITY;
+        if(locationCache != null){
+            city = locationCache.getCityName();
+        }
+        query = new RouteSearch.BusRouteQuery(fromAndTo, RouteSearch.BusLeaseWalk, city, 0);
         //开始规划路径
         routeSearch.calculateBusRouteAsyn(query);
     }
@@ -126,7 +137,7 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        Intent intent = null;
+        Intent intent;
         switch (v.getId()) {
             case R.id.iv_back:
                 finish();

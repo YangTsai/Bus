@@ -12,7 +12,7 @@ import com.amap.api.services.route.BusPath;
 import com.amap.api.services.route.BusStep;
 import com.hyst.bus.R;
 import com.hyst.bus.adapter.RecyclerAdapter;
-import com.hyst.bus.fragment.BaseFragment;
+import com.hyst.bus.fragment.BaseLazyFragment;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.SchemeBusStep;
 import com.hyst.bus.util.AMapUtil;
@@ -25,7 +25,7 @@ import java.util.List;
  * Created by Administrator on 2018/1/18.
  */
 
-public class RoutePlanFragment extends BaseFragment {
+public class RoutePlanFragment extends BaseLazyFragment {
 
     private TextView tv_route;
     private TextView tv_name;
@@ -47,6 +47,7 @@ public class RoutePlanFragment extends BaseFragment {
         this.size = size;
     }
 
+    @Override
     protected void loadData() {
         if (busPath == null || busPath.getSteps() == null) {
             return;
@@ -180,7 +181,6 @@ public class RoutePlanFragment extends BaseFragment {
         };
         recyclerView = ViewUtil.getVRowsNoLine(context, recyclerView, 1);
         recyclerView.setAdapter(adapter);
-        loadData();
     }
 
     /**
