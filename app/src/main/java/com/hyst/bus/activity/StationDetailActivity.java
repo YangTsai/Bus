@@ -19,12 +19,11 @@ import com.amap.api.services.busline.BusStationItem;
 import com.amap.api.services.core.AMapException;
 import com.hyst.bus.R;
 import com.hyst.bus.adapter.RecyclerAdapter;
-import com.hyst.bus.constant.Constant;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.cache.BusCache;
 import com.hyst.bus.model.cache.LocationCache;
-import com.hyst.bus.util.ACache;
 import com.hyst.bus.util.BusCacheUtil;
+import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.ToastUtil;
 import com.hyst.bus.util.ViewUtil;
 
@@ -62,14 +61,14 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
 
     @Override
     protected void initView() {
-        recyclerView = findViewById(R.id.recyclerView);
-        tv_bus = findViewById(R.id.tv_bus);
-        tv_name = findViewById(R.id.tv_name);
-        tv_detail = findViewById(R.id.tv_detail);
-        tv_reverse = findViewById(R.id.tv_reverse);
-        tv_refresh = findViewById(R.id.tv_refresh);
-        tv_map = findViewById(R.id.tv_map);
-        iv_back = findViewById(R.id.iv_back);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        tv_bus = (TextView) findViewById(R.id.tv_bus);
+        tv_name = (TextView) findViewById(R.id.tv_name);
+        tv_detail = (TextView) findViewById(R.id.tv_detail);
+        tv_reverse = (TextView) findViewById(R.id.tv_reverse);
+        tv_refresh = (TextView) findViewById(R.id.tv_refresh);
+        tv_map = (TextView) findViewById(R.id.tv_map);
+        iv_back = (ImageView) findViewById(R.id.iv_back);
         tv_map.setOnClickListener(this);
         tv_reverse.setOnClickListener(this);
         tv_refresh.setOnClickListener(this);
@@ -105,12 +104,8 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
     }
 
     private void searchBusLine() {
-        LocationCache event = (LocationCache) ACache.get(this).getAsObject(Constant.LOCATION_CONFIG);
-        String cityName = Constant.DEFAULT_CITY;
-        if (event != null) {
-            cityName = event.getCityName();
-        }
-        busLineQuery = new BusLineQuery(searchRoute, BusLineQuery.SearchType.BY_LINE_NAME, cityName);
+        LocationCache locationCache = LocationUtil.getIns(this).getLocation();
+        busLineQuery = new BusLineQuery(searchRoute, BusLineQuery.SearchType.BY_LINE_NAME, locationCache.getCityName());
         busLineQuery.setPageSize(10);
         busLineQuery.setPageNumber(1);
         busLineSearch = new BusLineSearch(this, busLineQuery);
@@ -128,7 +123,7 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
                     if (result.getPageCount() > 0 && result.getBusLines() != null
                             && result.getBusLines().size() > 0) {
                         List<BusLineItem> lines = result.getBusLines();
-                        BusLineItem busLineItem = null;
+                        BusLineItem busLineItem;
                         if (lines != null && lines.size() > 0) {
                             if (reverse && lines.size() > 1) {
                                 busLineItem = lines.get(0);

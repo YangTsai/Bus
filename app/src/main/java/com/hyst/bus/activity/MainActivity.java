@@ -65,17 +65,17 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        ll_home = findViewById(R.id.ll_home);
-        iv_home = findViewById(R.id.iv_home);
-        tv_home = findViewById(R.id.tv_home);
+        ll_home = (LinearLayout) findViewById(R.id.ll_home);
+        iv_home = (ImageView) findViewById(R.id.iv_home);
+        tv_home = (TextView) findViewById(R.id.tv_home);
         ll_home.setOnClickListener(this);
-        ll_route = findViewById(R.id.ll_route);
-        iv_route = findViewById(R.id.iv_route);
-        tv_route = findViewById(R.id.tv_route);
+        ll_route = (LinearLayout) findViewById(R.id.ll_route);
+        iv_route = (ImageView) findViewById(R.id.iv_route);
+        tv_route = (TextView) findViewById(R.id.tv_route);
         ll_route.setOnClickListener(this);
-        ll_map = findViewById(R.id.ll_map);
-        iv_map = findViewById(R.id.iv_map);
-        tv_map = findViewById(R.id.tv_map);
+        ll_map = (LinearLayout) findViewById(R.id.ll_map);
+        iv_map = (ImageView) findViewById(R.id.iv_map);
+        tv_map = (TextView) findViewById(R.id.tv_map);
         ll_map.setOnClickListener(this);
     }
 
@@ -137,7 +137,7 @@ public class MainActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SetPointEvent event) {
-        if (event != null && event.getTag().equals("RouteFragment")) {
+        if (event != null && event.getTag().equals(routeFragment.getClass().getName())) {
             routeFragment.setLocation(event);
         }
     }

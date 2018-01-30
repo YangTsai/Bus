@@ -51,13 +51,13 @@ public class RouteFragment extends BaseFragment {
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        tv_start = view.findViewById(R.id.tv_start);
-        tv_end = view.findViewById(R.id.tv_end);
-        tv_clear = view.findViewById(R.id.tv_clear);
-        iv_exchange = view.findViewById(R.id.iv_exchange);
-        ll_history = view.findViewById(R.id.ll_history);
-        recyclerView = view.findViewById(R.id.recyclerView);
-        springView = view.findViewById(R.id.springView);
+        tv_start = (TextView) view.findViewById(R.id.tv_start);
+        tv_end = (TextView) view.findViewById(R.id.tv_end);
+        tv_clear = (TextView) view.findViewById(R.id.tv_clear);
+        iv_exchange = (ImageView) view.findViewById(R.id.iv_exchange);
+        ll_history = (LinearLayout) view.findViewById(R.id.ll_history);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        springView = (SpringView) view.findViewById(R.id.springView);
         iv_exchange.setOnClickListener(this);
         tv_start.setOnClickListener(this);
         tv_end.setOnClickListener(this);
@@ -95,9 +95,9 @@ public class RouteFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(context, RoutePlanActivity.class);
                         Bundle bundle = new Bundle();
-                        SetPointEvent startPoint = new SetPointEvent("RouteFragment", Constant.POINT_TYPE_START_VALUE,
+                        SetPointEvent startPoint = new SetPointEvent(getClass().getName(), Constant.POINT_TYPE_START_VALUE,
                                 cache.getStartContent(), new LatLonPoint(cache.getStartLat(), cache.getStartLon()));
-                        SetPointEvent endPoint = new SetPointEvent("RouteFragment", Constant.POINT_TYPE_END_VALUE,
+                        SetPointEvent endPoint = new SetPointEvent(getClass().getName(), Constant.POINT_TYPE_END_VALUE,
                                 cache.getEndContent(), new LatLonPoint(cache.getEndLat(), cache.getEndLon()));
                         bundle.putParcelable("startPoint", startPoint);
                         bundle.putParcelable("endPoint", endPoint);
@@ -165,13 +165,13 @@ public class RouteFragment extends BaseFragment {
             case R.id.tv_start:
                 intent = new Intent(context, SetPointActivity.class);
                 intent.putExtra(Constant.POINT_TYPE, Constant.POINT_TYPE_START_VALUE);
-                intent.putExtra(Constant.POINT_TAG, "RouteFragment");
+                intent.putExtra(Constant.POINT_TAG, getClass().getName());
                 startActivity(intent);
                 break;
             case R.id.tv_end:
                 intent = new Intent(context, SetPointActivity.class);
                 intent.putExtra(Constant.POINT_TYPE, Constant.POINT_TYPE_END_VALUE);
-                intent.putExtra(Constant.POINT_TAG, "RouteFragment");
+                intent.putExtra(Constant.POINT_TAG, getClass().getName());
                 startActivity(intent);
                 break;
             case R.id.tv_clear:

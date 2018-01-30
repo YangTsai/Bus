@@ -18,11 +18,11 @@ import com.amap.api.services.route.WalkRouteResult;
 import com.hyst.bus.R;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
-import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.model.RecyclerHolder;
+import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.model.event.SetPointEvent;
-import com.hyst.bus.util.ACache;
 import com.hyst.bus.util.AMapUtil;
+import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.RouteCacheUtil;
 import com.hyst.bus.util.ToastUtil;
 import com.hyst.bus.util.ViewUtil;
@@ -69,14 +69,14 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
 
     @Override
     protected void initView() {
-        tv_start = findViewById(R.id.tv_start);
-        tv_end = findViewById(R.id.tv_end);
+        tv_start = (TextView) findViewById(R.id.tv_start);
+        tv_end = (TextView) findViewById(R.id.tv_end);
         tv_start.setOnClickListener(this);
         tv_end.setOnClickListener(this);
-        recyclerView = findViewById(R.id.recyclerView);
-        iv_exchange = findViewById(R.id.iv_exchange);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        iv_exchange = (ImageView) findViewById(R.id.iv_exchange);
         iv_exchange.setOnClickListener(this);
-        iv_back = findViewById(R.id.iv_back);
+        iv_back = (ImageView) findViewById(R.id.iv_back);
         iv_back.setOnClickListener(this);
     }
 
@@ -123,12 +123,8 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
      */
     private void searchRoute(LatLonPoint startPoint, LatLonPoint endPoint) {
         RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(startPoint, endPoint);
-        LocationCache locationCache = (LocationCache) ACache.get(this).getAsObject(Constant.LOCATION_CONFIG);
-        String city = Constant.DEFAULT_CITY;
-        if(locationCache != null){
-            city = locationCache.getCityName();
-        }
-        query = new RouteSearch.BusRouteQuery(fromAndTo, RouteSearch.BusLeaseWalk, city, 0);
+        LocationCache locationCache = LocationUtil.getIns(this).getLocation();
+        query = new RouteSearch.BusRouteQuery(fromAndTo, RouteSearch.BusLeaseWalk, locationCache.getCityName(), 0);
         //开始规划路径
         routeSearch.calculateBusRouteAsyn(query);
     }
@@ -155,13 +151,13 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
             case R.id.tv_start:
                 intent = new Intent(this, SetPointActivity.class);
                 intent.putExtra(Constant.POINT_TYPE, Constant.POINT_TYPE_START_VALUE);
-                intent.putExtra(Constant.POINT_TAG, "RoutePlanActivity");
+                intent.putExtra(Constant.POINT_TAG, getClass().getName());
                 startActivity(intent);
                 break;
             case R.id.tv_end:
                 intent = new Intent(this, SetPointActivity.class);
                 intent.putExtra(Constant.POINT_TYPE, Constant.POINT_TYPE_END_VALUE);
-                intent.putExtra(Constant.POINT_TAG, "RoutePlanActivity");
+                intent.putExtra(Constant.POINT_TAG, getClass().getName());
                 startActivity(intent);
                 break;
         }
@@ -185,7 +181,7 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SetPointEvent event) {
-        if (event != null && event.getTag().equals("RoutePlanActivity")) {
+        if (event != null && event.getTag().equals(getClass().getName())) {
             if (event.getType().equals(Constant.POINT_TYPE_START_VALUE)) {
                 tv_start.setText(event.getContent());
                 startPoint = event;

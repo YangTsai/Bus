@@ -3,6 +3,7 @@ package com.hyst.bus.fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,9 +23,8 @@ import com.amap.api.services.busline.BusLineSearch;
 import com.amap.api.services.busline.BusStationItem;
 import com.amap.api.services.core.AMapException;
 import com.hyst.bus.R;
-import com.hyst.bus.constant.Constant;
 import com.hyst.bus.model.cache.LocationCache;
-import com.hyst.bus.util.ACache;
+import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -53,9 +53,9 @@ public class MapFragment extends BaseFragment implements BusLineSearch.OnBusLine
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        tv_search = view.findViewById(R.id.tv_search);
-        et_search = view.findViewById(R.id.et_search);
-        mapView = view.findViewById(R.id.map);
+        tv_search = (TextView) view.findViewById(R.id.tv_search);
+        et_search = (EditText) view.findViewById(R.id.et_search);
+        mapView = (MapView) view.findViewById(R.id.map);
         tv_search.setOnClickListener(this);
         mapView.onCreate(savedInstanceState);
     }
@@ -66,11 +66,8 @@ public class MapFragment extends BaseFragment implements BusLineSearch.OnBusLine
         aMap.getUiSettings().setZoomControlsEnabled(false);
         aMap.setInfoWindowAdapter(this);
         aMap.setOnMapClickListener(this);
-        locationCache = (LocationCache) ACache.get(context).getAsObject(Constant.LOCATION_CONFIG);
-        if (locationCache != null) {
-            aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(locationCache.getLatitude(), locationCache.getLongitude())));
-        }
-
+        locationCache = LocationUtil.getIns(context).getLocation();
+        aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(locationCache.getLatitude(), locationCache.getLongitude())));
     }
 
 
@@ -171,8 +168,8 @@ public class MapFragment extends BaseFragment implements BusLineSearch.OnBusLine
     @Override
     public View getInfoContents(Marker marker) {
         mMarker = marker;
-        View infoContent = getLayoutInflater().inflate(R.layout.layout_mark_info, null);
-        TextView tv_mark =  infoContent.findViewById(R.id.tv_mark);
+        View infoContent = LayoutInflater.from(context).inflate(R.layout.layout_mark_info, null);
+        TextView tv_mark = (TextView) infoContent.findViewById(R.id.tv_mark);
         tv_mark.setText(marker.getTitle());
         return infoContent;
     }

@@ -21,9 +21,8 @@ import com.amap.api.services.busline.BusLineSearch;
 import com.amap.api.services.busline.BusStationItem;
 import com.amap.api.services.core.AMapException;
 import com.hyst.bus.R;
-import com.hyst.bus.constant.Constant;
 import com.hyst.bus.model.cache.LocationCache;
-import com.hyst.bus.util.ACache;
+import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -33,8 +32,8 @@ import java.util.List;
  * Created by Administrator on 2018/1/24.
  */
 
-public class BusMapActivity extends BaseActivity implements BusLineSearch.OnBusLineSearchListener,AMap.OnMapLoadedListener,
-        AMap.OnMapClickListener, AMap.InfoWindowAdapter{
+public class BusMapActivity extends BaseActivity implements BusLineSearch.OnBusLineSearchListener, AMap.OnMapLoadedListener,
+        AMap.OnMapClickListener, AMap.InfoWindowAdapter {
 
     private MapView mapView;
     private AMap aMap;
@@ -58,8 +57,8 @@ public class BusMapActivity extends BaseActivity implements BusLineSearch.OnBusL
 
     @Override
     protected void initView() {
-        iv_back =  findViewById(R.id.iv_back);
-        mapView =  findViewById(R.id.map_bus);
+        iv_back = (ImageView) findViewById(R.id.iv_back);
+        mapView = (MapView) findViewById(R.id.map_bus);
         mapView.onCreate(savedInstanceState);
         aMap = mapView.getMap();
         aMap.setOnMapClickListener(this);
@@ -75,12 +74,10 @@ public class BusMapActivity extends BaseActivity implements BusLineSearch.OnBusL
 
     @Override
     protected void initData() {
-        LocationCache locationCache = (LocationCache) ACache.get(this).getAsObject(Constant.LOCATION_CONFIG);
-        if (locationCache != null) {
-            aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(locationCache.getLatitude(), locationCache.getLongitude())));
-        }
+        LocationCache locationCache =  LocationUtil.getIns(this).getLocation();
+        aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(locationCache.getLatitude(), locationCache.getLongitude())));
         String bus = getIntent().getStringExtra("bus");
-        busLineQuery = new BusLineQuery(bus, BusLineQuery.SearchType.BY_LINE_NAME, locationCache.getCityName());
+        busLineQuery = new BusLineQuery(bus, BusLineQuery.SearchType.BY_LINE_NAME,locationCache.getCityName());
         busLineQuery.setPageSize(1);
         busLineQuery.setPageNumber(1);
         BusLineSearch busLineSearch = new BusLineSearch(this, busLineQuery);
@@ -135,7 +132,7 @@ public class BusMapActivity extends BaseActivity implements BusLineSearch.OnBusL
     public View getInfoContents(Marker marker) {
         mMarker = marker;
         View infoContent = getLayoutInflater().inflate(R.layout.layout_mark_info, null);
-        TextView tv_mark =  infoContent.findViewById(R.id.tv_mark);
+        TextView tv_mark = (TextView) infoContent.findViewById(R.id.tv_mark);
         tv_mark.setText(marker.getTitle());
         return infoContent;
     }

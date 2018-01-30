@@ -51,9 +51,9 @@ public class RouteDetailActivity extends BaseActivity implements AMap.OnMapLoade
 
     @Override
     protected void initView() {
-        mapView = findViewById(R.id.route_map);
-        iv_back = findViewById(R.id.iv_back);
-        viewPager = findViewById(R.id.viewPager_route);
+        mapView = (MapView) findViewById(R.id.route_map);
+        iv_back = (ImageView) findViewById(R.id.iv_back);
+        viewPager = (ViewPager) findViewById(R.id.viewPager_route);
         mapView.onCreate(savedInstanceState);
         iv_back.setOnClickListener(this);
     }
@@ -105,7 +105,7 @@ public class RouteDetailActivity extends BaseActivity implements AMap.OnMapLoade
 
 
     private void setBottomSheet() {
-        CoordinatorLayout coordinatorLayout = findViewById(R.id.cl_bottom);
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.cl_bottom);
         View bottomSheet = coordinatorLayout.findViewById(R.id.bottom_sheet);
         final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
         behavior.setPeekHeight(900);

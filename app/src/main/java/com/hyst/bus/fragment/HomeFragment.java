@@ -17,11 +17,10 @@ import com.hyst.bus.R;
 import com.hyst.bus.activity.StationDetailActivity;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
-import com.hyst.bus.model.cache.BusCache;
 import com.hyst.bus.model.BusInfo;
-import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.model.RecyclerHolder;
-import com.hyst.bus.util.ACache;
+import com.hyst.bus.model.cache.BusCache;
+import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.util.BusCacheUtil;
 import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.ToastUtil;
@@ -63,14 +62,14 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        tv_city_name = view.findViewById(R.id.tv_city_name);
-        et_bus = view.findViewById(R.id.et_bus);
-        tv_query_bus = view.findViewById(R.id.tv_query_bus);
-        re_bus = view.findViewById(R.id.re_bus);
-        recyclerView = view.findViewById(R.id.recyclerView);
-        ll_history = view.findViewById(R.id.ll_history);
-        tv_clear = view.findViewById(R.id.tv_clear);
-        springView = view.findViewById(R.id.springView);
+        tv_city_name = (TextView) view.findViewById(R.id.tv_city_name);
+        et_bus = (EditText) view.findViewById(R.id.et_bus);
+        tv_query_bus = (TextView) view.findViewById(R.id.tv_query_bus);
+        re_bus = (RecyclerView) view.findViewById(R.id.re_bus);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        ll_history = (LinearLayout) view.findViewById(R.id.ll_history);
+        tv_clear = (TextView) view.findViewById(R.id.tv_clear);
+        springView = (SpringView) view.findViewById(R.id.springView);
         tv_query_bus.setOnClickListener(this);
 
         tv_clear.setOnClickListener(this);
@@ -132,21 +131,16 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
         re_bus = ViewUtil.getVRowsNoLine(context, re_bus, 1);
         re_bus.setAdapter(adapter_bus);
         //
-        LocationCache event = (LocationCache) ACache.get(context).getAsObject(Constant.LOCATION_CONFIG);
-        if (event != null) {
-            tv_city_name.setText(event.getCityName());
-            String city = event.getCityName();
-            query = new PoiSearch.Query(Constant.POI_BUS, "", city);
-            query.setPageSize(1);// 设置每页最多返回多少条poiitem
-            query.setPageNum(1);//设置查询页码
-            poiSearch = new PoiSearch(context, query);
-            poiSearch.setOnPoiSearchListener(this);
-            //设置周边搜索的中心点以及半径
-            poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(event.getLatitude(), event.getLongitude()), 1000));
-            poiSearch.searchPOIAsyn();
-        } else {
-            LocationUtil.setLocation(context, "HomeFragment");
-        }
+        LocationCache locationCache = LocationUtil.getIns(context).getLocation();
+        tv_city_name.setText(locationCache.getCityName());
+        query = new PoiSearch.Query(Constant.POI_BUS, "", locationCache.getCityName());
+        query.setPageSize(1);// 设置每页最多返回多少条poiitem
+        query.setPageNum(1);//设置查询页码
+        poiSearch = new PoiSearch(context, query);
+        poiSearch.setOnPoiSearchListener(this);
+        //设置周边搜索的中心点以及半径
+        poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(locationCache.getLatitude(), locationCache.getLongitude()), 1000));
+        poiSearch.searchPOIAsyn();
     }
 
 

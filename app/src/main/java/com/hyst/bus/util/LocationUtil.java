@@ -30,10 +30,32 @@ public class LocationUtil {
     //定位
     private static AMapLocationClient mlocationClient;
     private static AMapLocationClientOption mLocationOption;
+    //
+    private static LocationUtil locationUtil;
+    public static Context mContext;
 
-    public static void setLocation(final Context context, final String tag) {
+    public static LocationUtil getIns(Context context) {
+        if (locationUtil == null) {
+            locationUtil = new LocationUtil();
+        }
+        mContext = context;
+        return locationUtil;
+    }
+
+    /**
+     * 设置定位参数，启动定位
+     *
+     * @param tag        定位发起标签（默认传入类名）
+     * @param isCallBack 是否回调
+     */
+    public void setLocation(final String tag, final boolean isCallBack) {
+        boolean connected = NetWorkUtil.isNetworkConnected(mContext);
+        if (!connected) {
+            ToastUtil.show(mContext, "请打开网络连接");
+            return;
+        }
         //初始化定位
-        mlocationClient = new AMapLocationClient(context);
+        mlocationClient = new AMapLocationClient(mContext);
         //配置定位参数
         mLocationOption = new AMapLocationClientOption();
         //设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
@@ -42,7 +64,6 @@ public class LocationUtil {
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
         //获取一次定位结果：
         mLocationOption.setOnceLocation(true);
-
         mlocationClient.setLocationOption(mLocationOption);
         mlocationClient.startLocation();
         //设置定位回调监听
@@ -50,20 +71,15 @@ public class LocationUtil {
             @Override
             public void onLocationChanged(AMapLocation aMapLocation) {
                 if (aMapLocation.getErrorCode() == 0) {
-                    //定位成功回调信息，设置相关消息
-                    aMapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-                    aMapLocation.getLatitude();//获取纬度
-                    aMapLocation.getLongitude();//获取经度
-                    aMapLocation.getAccuracy();//获取精度信息
-                    aMapLocation.getAddress();
-                    aMapLocation.getAoiName();
-                    //
-                    SetPointEvent event = new SetPointEvent();
-                    event.setTag(tag);
-                    event.setContent(aMapLocation.getAoiName());
-                    event.setLatLonPoint(new LatLonPoint(aMapLocation.getLatitude(), aMapLocation.getLongitude()));
-                    EventBus.getDefault().post(event);
-                    //
+                    //将定位信息返回给发起定位的地方
+                    if (isCallBack) {
+                        SetPointEvent event = new SetPointEvent();
+                        event.setTag(tag);
+                        event.setContent(aMapLocation.getAoiName());
+                        event.setLatLonPoint(new LatLonPoint(aMapLocation.getLatitude(), aMapLocation.getLongitude()));
+                        EventBus.getDefault().post(event);
+                    }
+                    //将定位信息存入本地
                     LocationCache locationCache = new LocationCache();
                     locationCache.setAoiName(aMapLocation.getAoiName());
                     locationCache.setAddress(aMapLocation.getAddress());
@@ -71,18 +87,19 @@ public class LocationUtil {
                     locationCache.setCityName(aMapLocation.getCity());
                     locationCache.setLatitude(aMapLocation.getLatitude());
                     locationCache.setLongitude(aMapLocation.getLongitude());
-                    ACache.get(context).put(Constant.LOCATION_CONFIG, locationCache);
+                    ACache.get(mContext).put(Constant.LOCATION_CONFIG, locationCache);
                 } else if (aMapLocation.getErrorCode() == 12) {
-                    ACache.get(context).remove(Constant.LOCATION_CONFIG);
+                    ACache.get(mContext).remove(Constant.LOCATION_CONFIG);
                     List<PermissionItem> permissionItems = new ArrayList<>();
                     permissionItems.add(new PermissionItem(Manifest.permission.ACCESS_FINE_LOCATION, "定位", R.drawable.permission_ic_location));
-                    HiPermission.create(context)
+                    HiPermission.create(mContext)
                             .permissions(permissionItems)
                             .style(R.style.PermissionDefaultBlueStyle)
                             .checkMutiPermission(new PermissionCallback() {
                                 @Override
                                 public void onClose() {
                                     SetPointEvent event = new SetPointEvent();
+                                    event.setTag(tag);
                                     EventBus.getDefault().post(event);
                                 }
 
@@ -105,6 +122,23 @@ public class LocationUtil {
                 }
             }
         });
+    }
+
+    /**
+     * 获取定位信息
+     *
+     * @return
+     */
+    public LocationCache getLocation() {
+        LocationCache locationCache = (LocationCache) ACache.get(mContext).getAsObject(Constant.LOCATION_CONFIG);
+        if (locationCache == null) {
+            locationCache = new LocationCache();
+            locationCache.setCityName(Constant.DEFAULT_CITY);
+            locationCache.setLatitude(Constant.DEFAULT_SHANTOU.latitude);
+            locationCache.setLongitude(Constant.DEFAULT_SHANTOU.longitude);
+            setLocation(getClass().getName(), false);
+        }
+        return locationCache;
     }
 
 }

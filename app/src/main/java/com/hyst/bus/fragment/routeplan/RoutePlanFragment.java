@@ -95,11 +95,11 @@ public class RoutePlanFragment extends BaseLazyFragment {
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        recyclerView = view.findViewById(R.id.recyclerView);
-        tv_route = view.findViewById(R.id.tv_route);
-        tv_name = view.findViewById(R.id.tv_name);
-        mGroup = view.findViewById(R.id.view_group);
-        tv_address = view.findViewById(R.id.tv_address);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        tv_route = (TextView) view.findViewById(R.id.tv_route);
+        tv_name = (TextView) view.findViewById(R.id.tv_name);
+        mGroup = (ViewGroup) view.findViewById(R.id.view_group);
+        tv_address = (TextView) view.findViewById(R.id.tv_address);
     }
 
     @Override

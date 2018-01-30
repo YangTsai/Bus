@@ -15,10 +15,9 @@ import com.amap.api.services.poisearch.PoiSearch;
 import com.hyst.bus.R;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
-import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.model.RecyclerHolder;
+import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.model.event.SetPointEvent;
-import com.hyst.bus.util.ACache;
 import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.ViewUtil;
 
@@ -61,15 +60,15 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
 
     @Override
     protected void initView() {
-        et_location = findViewById(R.id.et_location);
-        iv_clear = findViewById(R.id.iv_clear);
-        recyclerView = findViewById(R.id.recyclerView);
-        iv_back = findViewById(R.id.iv_back);
-        tv_location = findViewById(R.id.tv_location);
+        et_location = (EditText) findViewById(R.id.et_location);
+        iv_clear = (ImageView) findViewById(R.id.iv_clear);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        iv_back = (ImageView) findViewById(R.id.iv_back);
+        tv_location = (TextView) findViewById(R.id.tv_location);
         iv_back.setOnClickListener(this);
         tv_location.setOnClickListener(this);
         iv_clear.setOnClickListener(this);
-        final LocationCache locationCache = (LocationCache) ACache.get(this).getAsObject(Constant.LOCATION_CONFIG);
+        final LocationCache locationCache = LocationUtil.getIns(this).getLocation();
         et_location.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -86,11 +85,7 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
                 int length = editable.toString().length();
                 if (length > 0) {
                     iv_clear.setVisibility(View.VISIBLE);
-                    if (locationCache != null) {
-                        setSearch(editable.toString(), locationCache.getCityName());
-                    } else {
-                        setSearch(editable.toString(),Constant.DEFAULT_CITY);
-                    }
+                    setSearch(editable.toString(), locationCache.getCityName());
                 } else {
                     iv_clear.setVisibility(View.GONE);
                     adapter.setDatas(null);
@@ -147,7 +142,7 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
                 et_location.setText("");
                 break;
             case R.id.tv_location:
-                LocationUtil.setLocation(this, "SetPointActivity");
+                LocationUtil.getIns(this).setLocation(getClass().getName(),true);
                 break;
             case R.id.iv_back:
                 finish();
@@ -157,7 +152,7 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SetPointEvent event) {
-        if (event != null && event.getTag().equals("SetPointActivity")) {
+        if (event != null && event.getTag().equals(getClass().getName())) {
             et_location.setText("我的位置");
             EventBus.getDefault().post(new SetPointEvent(tag, pointType, "我的位置", event.getLatLonPoint()));
             finish();
