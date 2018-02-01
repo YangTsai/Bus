@@ -116,14 +116,18 @@ public class RouteDetailActivity extends BaseActivity implements AMap.OnMapLoade
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 //这里是bottomSheet 状态的改变，根据slideOffset可以做一些动画
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    behavior.setPeekHeight(320);
                     behavior.setState(ViewPagerBottomSheetBehavior.STATE_COLLAPSED);
+                } else if (newState == BottomSheetBehavior.STATE_SETTLING) {
+                    behavior.setPeekHeight(900);
+                    behavior.setState(ViewPagerBottomSheetBehavior.STATE_SETTLING);
                 }
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 //这里是拖拽中的回调，根据slideOffset可以做一些动画
-                behavior.setPeekHeight(320);
+//                behavior.setPeekHeight(320);
             }
         });
     }
