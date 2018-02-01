@@ -16,6 +16,7 @@ import com.amap.api.services.route.BusRouteResult;
 import com.hyst.bus.R;
 import com.hyst.bus.adapter.FragmentAdapter;
 import com.hyst.bus.custom.BusRouteOverlay;
+import com.hyst.bus.custom.ViewPagerBottomSheetBehavior;
 import com.hyst.bus.fragment.routeplan.RoutePlanFragment;
 
 import java.util.ArrayList;
@@ -107,22 +108,22 @@ public class RouteDetailActivity extends BaseActivity implements AMap.OnMapLoade
     private void setBottomSheet() {
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.cl_bottom);
         View bottomSheet = coordinatorLayout.findViewById(R.id.bottom_sheet);
-        final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+        final ViewPagerBottomSheetBehavior behavior = ViewPagerBottomSheetBehavior.from(bottomSheet);
         behavior.setPeekHeight(900);
-        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        behavior.setState(ViewPagerBottomSheetBehavior.STATE_COLLAPSED);
+        behavior.setBottomSheetCallback(new ViewPagerBottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 //这里是bottomSheet 状态的改变，根据slideOffset可以做一些动画
-                behavior.setPeekHeight(320);
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    behavior.setState(ViewPagerBottomSheetBehavior.STATE_COLLAPSED);
                 }
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 //这里是拖拽中的回调，根据slideOffset可以做一些动画
+                behavior.setPeekHeight(320);
             }
         });
     }
