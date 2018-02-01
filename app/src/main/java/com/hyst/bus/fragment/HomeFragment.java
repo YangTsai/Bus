@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amap.api.services.core.LatLonPoint;
@@ -49,7 +48,6 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
     private List<BusCache> data;
-    private LinearLayout ll_history;
     private TextView tv_clear;
 
     private PoiSearch.Query query;
@@ -67,7 +65,6 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
         tv_query_bus = (TextView) view.findViewById(R.id.tv_query_bus);
         re_bus = (RecyclerView) view.findViewById(R.id.re_bus);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        ll_history = (LinearLayout) view.findViewById(R.id.ll_history);
         tv_clear = (TextView) view.findViewById(R.id.tv_clear);
         springView = (SpringView) view.findViewById(R.id.springView);
         tv_query_bus.setOnClickListener(this);
@@ -94,9 +91,9 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
         data_bus = new ArrayList<>();
         data = BusCacheUtil.getCache(context);
         if (data == null || data.size() == 0) {
-            ll_history.setVisibility(View.GONE);
+            tv_clear.setText("暂无历史记录");
         } else {
-            ll_history.setVisibility(View.VISIBLE);
+            tv_clear.setText("清除历史记录");
         }
         adapter = new RecyclerAdapter<BusCache>(context, data, R.layout.item_bus_history) {
             @Override
@@ -120,8 +117,10 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
             @Override
             public void convert(final RecyclerHolder holder, final BusInfo info) {
                 if (holder.getAdapterPosition() == 0) {
+                    holder.getView(R.id.view_line).setVisibility(View.VISIBLE);
                     holder.getView(R.id.rl_address).setVisibility(View.VISIBLE);
                 } else {
+                    holder.getView(R.id.view_line).setVisibility(View.GONE);
                     holder.getView(R.id.rl_address).setVisibility(View.GONE);
                 }
                 holder.setText(R.id.tv_station_name, info.getStationName());
@@ -147,9 +146,9 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
     private void updateData() {
         data = BusCacheUtil.getCache(context);
         if (data == null || data.size() == 0) {
-            ll_history.setVisibility(View.GONE);
+            tv_clear.setText("暂无历史记录");
         } else {
-            ll_history.setVisibility(View.VISIBLE);
+            tv_clear.setText("清除历史记录");
         }
         adapter.setDatas(data);
     }
@@ -172,7 +171,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
                 BusCacheUtil.clearCache(context);
                 data.clear();
                 adapter.setDatas(data);
-                ll_history.setVisibility(View.GONE);
+                tv_clear.setText("暂无历史记录");
                 break;
         }
     }

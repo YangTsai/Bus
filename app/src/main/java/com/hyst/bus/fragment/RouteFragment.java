@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amap.api.services.core.LatLonPoint;
@@ -15,8 +14,8 @@ import com.hyst.bus.activity.RoutePlanActivity;
 import com.hyst.bus.activity.SetPointActivity;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
-import com.hyst.bus.model.cache.RouteCache;
 import com.hyst.bus.model.RecyclerHolder;
+import com.hyst.bus.model.cache.RouteCache;
 import com.hyst.bus.model.event.SetPointEvent;
 import com.hyst.bus.util.RouteCacheUtil;
 import com.hyst.bus.util.ViewUtil;
@@ -38,7 +37,6 @@ public class RouteFragment extends BaseFragment {
     private ImageView iv_exchange;
     //历史记录
     private SpringView springView;
-    private LinearLayout ll_history;
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
     private List<RouteCache> data;
@@ -55,7 +53,6 @@ public class RouteFragment extends BaseFragment {
         tv_end = (TextView) view.findViewById(R.id.tv_end);
         tv_clear = (TextView) view.findViewById(R.id.tv_clear);
         iv_exchange = (ImageView) view.findViewById(R.id.iv_exchange);
-        ll_history = (LinearLayout) view.findViewById(R.id.ll_history);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         springView = (SpringView) view.findViewById(R.id.springView);
         iv_exchange.setOnClickListener(this);
@@ -82,9 +79,9 @@ public class RouteFragment extends BaseFragment {
     protected void initData() {
         data = RouteCacheUtil.getCache(context);
         if (data == null || data.size() == 0) {
-            ll_history.setVisibility(View.GONE);
+            tv_clear.setText("暂无历史记录");
         } else {
-            ll_history.setVisibility(View.VISIBLE);
+            tv_clear.setText("清除历史记录");
         }
         adapter = new RecyclerAdapter<RouteCache>(context, data, R.layout.item_history) {
             @Override
@@ -114,9 +111,9 @@ public class RouteFragment extends BaseFragment {
     private void updateData() {
         data = RouteCacheUtil.getCache(context);
         if (data == null || data.size() == 0) {
-            ll_history.setVisibility(View.GONE);
+            tv_clear.setText("暂无历史记录");
         } else {
-            ll_history.setVisibility(View.VISIBLE);
+            tv_clear.setText("清除历史记录");
         }
         adapter.setDatas(data);
     }
@@ -178,7 +175,7 @@ public class RouteFragment extends BaseFragment {
                 RouteCacheUtil.clearCache(context);
                 data.clear();
                 adapter.setDatas(data);
-                ll_history.setVisibility(View.GONE);
+                tv_clear.setText("暂无历史记录");
                 break;
         }
     }
