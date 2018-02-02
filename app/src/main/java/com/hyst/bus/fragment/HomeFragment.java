@@ -144,6 +144,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
 
 
     private void updateData() {
+        poiSearch.searchPOIAsyn();
         data = BusCacheUtil.getCache(context);
         if (data == null || data.size() == 0) {
             tv_clear.setText("暂无历史记录");
@@ -179,6 +180,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
     @Override
     public void onPoiSearched(PoiResult poiResult, int i) {
         if (i == 1000 && poiResult != null) {
+            data_bus.clear();
             ArrayList<PoiItem> pois = poiResult.getPois();
             if (pois != null && pois.size() > 0) {
                 String snippet = pois.get(0).getSnippet();

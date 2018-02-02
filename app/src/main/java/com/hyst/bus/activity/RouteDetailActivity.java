@@ -118,8 +118,8 @@ public class RouteDetailActivity extends BaseActivity implements AMap.OnMapLoade
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                     behavior.setPeekHeight(320);
                     behavior.setState(ViewPagerBottomSheetBehavior.STATE_COLLAPSED);
-                } else if (newState == BottomSheetBehavior.STATE_SETTLING) {
                     behavior.setPeekHeight(900);
+                } else if (newState == BottomSheetBehavior.STATE_SETTLING) {
                     behavior.setState(ViewPagerBottomSheetBehavior.STATE_SETTLING);
                 }
             }
