@@ -55,6 +55,7 @@
         <activity android:name=".activity.RouteDetailActivity"></activity>
         <activity android:name=".activity.StationDetailActivity"></activity>
         <activity android:name=".activity.BusMapActivity"></activity>
+        <activity android:name=".activity.MapPointActivity"></activity>
     </application>
 
 </manifest>

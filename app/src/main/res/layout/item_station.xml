@@ -49,9 +49,7 @@
     <TextView
         android:id="@+id/tv_station_name"
         style="@style/text_3"
-        android:layout_width="20dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/v_line"
-        android:layout_centerHorizontal="true"
-        android:gravity="center_horizontal" />
+        android:ems="1" />
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.hyst.bus.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -17,6 +18,7 @@ import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.cache.LocationCache;
+import com.hyst.bus.model.event.PoiItemEvent;
 import com.hyst.bus.model.event.SetPointEvent;
 import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.ViewUtil;
@@ -38,6 +40,7 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
     private EditText et_location;
     private ImageView iv_clear;
     private TextView tv_location;
+    private TextView tv_map_location;
 
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
@@ -65,7 +68,9 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         iv_back = (ImageView) findViewById(R.id.iv_back);
         tv_location = (TextView) findViewById(R.id.tv_location);
+        tv_map_location = (TextView) findViewById(R.id.tv_map_location);
         iv_back.setOnClickListener(this);
+        tv_map_location.setOnClickListener(this);
         tv_location.setOnClickListener(this);
         iv_clear.setOnClickListener(this);
         final LocationCache locationCache = LocationUtil.getIns(this).getCurrentLocation();
@@ -142,10 +147,15 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
                 et_location.setText("");
                 break;
             case R.id.tv_location:
-                LocationUtil.getIns(this).setLocation(getClass().getName(),true);
+                LocationUtil.getIns(this).setLocation(getClass().getName(), true);
                 break;
             case R.id.iv_back:
                 finish();
+                break;
+            case R.id.tv_map_location:
+                Intent intent = new Intent(this,MapPointActivity.class);
+                intent.putExtra("tag",getClass().getName());
+                startActivity(intent);
                 break;
         }
     }
@@ -158,6 +168,16 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
             finish();
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PoiItemEvent event) {
+        if (event != null && event.getTag().equals(getClass().getName())) {
+            et_location.setText(event.getPoiItem().getTitle());
+            EventBus.getDefault().post(new SetPointEvent(tag, pointType, event.getPoiItem().getTitle(), event.getPoiItem().getLatLonPoint()));
+            finish();
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
