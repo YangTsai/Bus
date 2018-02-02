@@ -71,4 +71,5 @@ public class ViewUtil {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         return recyclerView;
     }
+
 }

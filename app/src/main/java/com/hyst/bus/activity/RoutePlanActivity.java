@@ -123,7 +123,7 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
      */
     private void searchRoute(LatLonPoint startPoint, LatLonPoint endPoint) {
         RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(startPoint, endPoint);
-        LocationCache locationCache = LocationUtil.getIns(this).getLocation();
+        LocationCache locationCache = LocationUtil.getIns(this).getCurrentLocation();
         query = new RouteSearch.BusRouteQuery(fromAndTo, RouteSearch.BusLeaseWalk, locationCache.getCityName(), 0);
         //开始规划路径
         routeSearch.calculateBusRouteAsyn(query);

@@ -9,7 +9,8 @@
         android:id="@+id/iv_bus"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@drawable/ic_bus_route" />
+        android:padding="5dp"
+        android:src="@drawable/route_location" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,13 +23,14 @@
             android:layout_width="match_parent"
             android:layout_height="10dp"
             android:layout_centerInParent="true"
-            android:background="@color/station_green"></View>
+            android:background="@color/colorTheme"></View>
 
         <ImageView
-            android:layout_width="12dp"
+            android:id="@+id/iv_jiantou"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/map_route_yuan" />
+            android:src="@drawable/route_jiantou" />
 
     </RelativeLayout>
 
@@ -51,8 +53,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/v_line"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/btn_re_gray"
-        android:gravity="center_horizontal"
-        android:padding="2dp"
-        android:text="哈哈哈哈哈哈" />
+        android:gravity="center_horizontal" />
 </LinearLayout>

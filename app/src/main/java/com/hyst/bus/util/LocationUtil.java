@@ -125,11 +125,11 @@ public class LocationUtil {
     }
 
     /**
-     * 获取定位信息
+     * 获取当前位置信息
      *
      * @return
      */
-    public LocationCache getLocation() {
+    public LocationCache getCurrentLocation() {
         LocationCache locationCache = (LocationCache) ACache.get(mContext).getAsObject(Constant.LOCATION_CONFIG);
         if (locationCache == null) {
             locationCache = new LocationCache();

@@ -74,7 +74,7 @@ public class BusMapActivity extends BaseActivity implements BusLineSearch.OnBusL
 
     @Override
     protected void initData() {
-        LocationCache locationCache =  LocationUtil.getIns(this).getLocation();
+        LocationCache locationCache =  LocationUtil.getIns(this).getCurrentLocation();
         aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(locationCache.getLatitude(), locationCache.getLongitude())));
         String bus = getIntent().getStringExtra("bus");
         busLineQuery = new BusLineQuery(bus, BusLineQuery.SearchType.BY_LINE_NAME,locationCache.getCityName());

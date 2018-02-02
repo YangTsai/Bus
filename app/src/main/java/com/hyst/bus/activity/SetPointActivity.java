@@ -68,7 +68,7 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
         iv_back.setOnClickListener(this);
         tv_location.setOnClickListener(this);
         iv_clear.setOnClickListener(this);
-        final LocationCache locationCache = LocationUtil.getIns(this).getLocation();
+        final LocationCache locationCache = LocationUtil.getIns(this).getCurrentLocation();
         et_location.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {

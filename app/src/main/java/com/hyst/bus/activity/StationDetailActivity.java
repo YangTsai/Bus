@@ -38,13 +38,15 @@ import java.util.List;
 
 public class StationDetailActivity extends BaseActivity implements BusLineSearch.OnBusLineSearchListener {
 
-    private TextView tv_map;
+    private ImageView tv_map;
     private TextView tv_bus;
     private TextView tv_name;
     private TextView tv_detail;
-    private TextView tv_reverse;
-    private TextView tv_refresh;
+    private LinearLayout ll_reverse;
+    private LinearLayout ll_refresh;
     private ImageView iv_back;
+
+    //
 
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
@@ -65,13 +67,13 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
         tv_bus = (TextView) findViewById(R.id.tv_bus);
         tv_name = (TextView) findViewById(R.id.tv_name);
         tv_detail = (TextView) findViewById(R.id.tv_detail);
-        tv_reverse = (TextView) findViewById(R.id.tv_reverse);
-        tv_refresh = (TextView) findViewById(R.id.tv_refresh);
-        tv_map = (TextView) findViewById(R.id.tv_map);
+        ll_reverse = (LinearLayout) findViewById(R.id.ll_reverse);
+        ll_refresh = (LinearLayout) findViewById(R.id.ll_refresh);
+        tv_map = (ImageView) findViewById(R.id.tv_map);
         iv_back = (ImageView) findViewById(R.id.iv_back);
         tv_map.setOnClickListener(this);
-        tv_reverse.setOnClickListener(this);
-        tv_refresh.setOnClickListener(this);
+        ll_reverse.setOnClickListener(this);
+        ll_refresh.setOnClickListener(this);
         iv_back.setOnClickListener(this);
 
     }
@@ -86,15 +88,20 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
             public void convert(RecyclerHolder holder, String s) {
                 holder.setText(R.id.tv_count, holder.getAdapterPosition() + 1 + "");
                 holder.setText(R.id.tv_station_name, s);
-                ImageView view = holder.getView(R.id.iv_bus);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(80, 80);
-                view.setLayoutParams(params);
-                view.setImageResource(R.drawable.ic_bus_route);
-                params.setMargins(50, 0, 0, 0);
                 if (holder.getAdapterPosition() == data.size() / 2) {
-                    view.setVisibility(View.VISIBLE);
+                    ((TextView) holder.getView(R.id.tv_station_name)).setTextColor(getResources().getColor(R.color.station_red2));
+                    ((TextView) holder.getView(R.id.tv_count)).setTextColor(getResources().getColor(R.color.station_red2));
+                    holder.setImageResource(R.id.iv_jiantou, R.drawable.route_jiantou_red);
+                    holder.getView(R.id.iv_bus).setVisibility(View.VISIBLE);
                 } else {
-                    view.setVisibility(View.INVISIBLE);
+                    ((TextView) holder.getView(R.id.tv_station_name)).setTextColor(getResources().getColor(R.color.colorFont));
+                    ((TextView) holder.getView(R.id.tv_count)).setTextColor(getResources().getColor(R.color.colorFont));
+                    holder.setImageResource(R.id.iv_jiantou, R.drawable.route_jiantou);
+                    holder.getView(R.id.iv_bus).setVisibility(View.INVISIBLE);
+                    if (holder.getAdapterPosition() == 10 || holder.getAdapterPosition() == 17) {
+                        holder.getView(R.id.iv_bus).setVisibility(View.VISIBLE);
+                        holder.setImageResource(R.id.iv_bus, R.drawable.ic_bus_route);
+                    }
                 }
             }
         };
@@ -104,7 +111,7 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
     }
 
     private void searchBusLine() {
-        LocationCache locationCache = LocationUtil.getIns(this).getLocation();
+        LocationCache locationCache = LocationUtil.getIns(this).getCurrentLocation();
         busLineQuery = new BusLineQuery(searchRoute, BusLineQuery.SearchType.BY_LINE_NAME, locationCache.getCityName());
         busLineQuery.setPageSize(10);
         busLineQuery.setPageNumber(1);
@@ -178,16 +185,16 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-            case R.id.tv_reverse:
+            case R.id.ll_reverse:
                 reverse = !reverse;
                 busLineSearch.searchBusLineAsyn();
                 break;
-            case R.id.tv_refresh:
+            case R.id.ll_refresh:
                 busLineSearch.searchBusLineAsyn();
                 break;
             case R.id.tv_map:
                 Intent intent = new Intent(this, BusMapActivity.class);
-                intent.putExtra("bus",searchRoute);
+                intent.putExtra("bus", searchRoute);
                 startActivity(intent);
                 break;
             case R.id.iv_back:

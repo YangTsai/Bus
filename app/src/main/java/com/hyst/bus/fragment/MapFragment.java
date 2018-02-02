@@ -66,7 +66,7 @@ public class MapFragment extends BaseFragment implements BusLineSearch.OnBusLine
         aMap.getUiSettings().setZoomControlsEnabled(false);
         aMap.setInfoWindowAdapter(this);
         aMap.setOnMapClickListener(this);
-        locationCache = LocationUtil.getIns(context).getLocation();
+        locationCache = LocationUtil.getIns(context).getCurrentLocation();
         aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(locationCache.getLatitude(), locationCache.getLongitude())));
     }
 

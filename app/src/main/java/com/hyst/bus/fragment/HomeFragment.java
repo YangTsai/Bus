@@ -38,6 +38,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
 
     private SpringView springView;
     private EditText et_bus;
+    private TextView tv_city;
     private TextView tv_city_name;
     private TextView tv_query_bus;
     //
@@ -60,6 +61,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
+        tv_city = (TextView) view.findViewById(R.id.tv_city);
         tv_city_name = (TextView) view.findViewById(R.id.tv_city_name);
         et_bus = (EditText) view.findViewById(R.id.et_bus);
         tv_query_bus = (TextView) view.findViewById(R.id.tv_query_bus);
@@ -68,6 +70,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
         tv_clear = (TextView) view.findViewById(R.id.tv_clear);
         springView = (SpringView) view.findViewById(R.id.springView);
         tv_query_bus.setOnClickListener(this);
+        tv_city.setOnClickListener(this);
 
         tv_clear.setOnClickListener(this);
         springView.setType(SpringView.Type.FOLLOW);
@@ -130,7 +133,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
         re_bus = ViewUtil.getVRowsNoLine(context, re_bus, 1);
         re_bus.setAdapter(adapter_bus);
         //
-        LocationCache locationCache = LocationUtil.getIns(context).getLocation();
+        LocationCache locationCache = LocationUtil.getIns(context).getCurrentLocation();
         tv_city_name.setText(locationCache.getCityName());
         query = new PoiSearch.Query(Constant.POI_BUS, "", locationCache.getCityName());
         query.setPageSize(1);// 设置每页最多返回多少条poiitem
@@ -173,6 +176,9 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
                 data.clear();
                 adapter.setDatas(data);
                 tv_clear.setText("暂无历史记录");
+                break;
+            case R.id.tv_city:
+
                 break;
         }
     }

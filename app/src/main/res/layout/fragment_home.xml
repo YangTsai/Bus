@@ -4,18 +4,32 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_city_name"
-        style="@style/text_ty"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/white"/>
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/tv_city"
+            style="@style/text_3"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:background="@color/white"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/tv_city_name"
+            style="@style/text_ty"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="@color/white" />
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
         android:background="@color/gray"></View>
-
 
     <LinearLayout
         android:layout_width="match_parent"
