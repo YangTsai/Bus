@@ -155,7 +155,7 @@ public class BusMapActivity extends BaseActivity implements BusLineSearch.OnBusL
                             aMap.moveCamera(CameraUpdateFactory.zoomTo(12));
 
                             aMap.addMarker(new MarkerOptions().position(latLng).title(item.getBusStationName()).icon(
-                                    BitmapDescriptorFactory.fromResource(R.drawable.ic_red_round)));
+                                    BitmapDescriptorFactory.fromResource(R.drawable.map_route_yuan)));
                         }
                         aMap.addPolyline(new PolylineOptions().
                                 addAll(latLngs).width(20).color(Color.parseColor("#00EE00")));

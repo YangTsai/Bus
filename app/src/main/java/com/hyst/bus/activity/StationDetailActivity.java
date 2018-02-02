@@ -101,6 +101,7 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
                     if (holder.getAdapterPosition() == 10 || holder.getAdapterPosition() == 17) {
                         holder.getView(R.id.iv_bus).setVisibility(View.VISIBLE);
                         holder.setImageResource(R.id.iv_bus, R.drawable.ic_bus_route);
+                        holder.getView(R.id.iv_bus).setPadding(0,0,0,0);
                     }
                 }
             }
