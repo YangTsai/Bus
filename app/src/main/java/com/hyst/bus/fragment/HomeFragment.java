@@ -16,6 +16,7 @@ import com.hyst.bus.R;
 import com.hyst.bus.activity.StationDetailActivity;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
+import com.hyst.bus.dialog.DeleteDialog;
 import com.hyst.bus.model.BusInfo;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.cache.BusCache;
@@ -54,6 +55,9 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
     private PoiSearch.Query query;
     private PoiSearch poiSearch;
 
+
+    private DeleteDialog deleteDialog;
+
     @Override
     protected int setLayoutId() {
         return R.layout.fragment_home;
@@ -91,6 +95,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
 
     @Override
     protected void initData() {
+        deleteDialog = new DeleteDialog(context);
         data_bus = new ArrayList<>();
         data = BusCacheUtil.getCache(context);
         if (data == null || data.size() == 0) {
@@ -172,15 +177,21 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
                 }
                 break;
             case R.id.tv_clear:
-                BusCacheUtil.clearCache(context);
-                data.clear();
-                adapter.setDatas(data);
-                tv_clear.setText("暂无历史记录");
+                if (data != null && data.size() > 0) {
+                    deleteDialog.showDialog("BusCache", this);
+                }
                 break;
             case R.id.tv_city:
 
                 break;
         }
+    }
+
+
+    public void delete() {
+        data.clear();
+        adapter.setDatas(data);
+        tv_clear.setText("暂无历史记录");
     }
 
     @Override

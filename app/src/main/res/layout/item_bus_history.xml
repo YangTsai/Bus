@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/ll_search_address"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="55dp"
         android:padding="5dp"
         android:orientation="horizontal">
 
@@ -28,14 +28,14 @@
 
             <TextView
                 android:id="@+id/tv_name"
-                style="@style/text_ty"
+                style="@style/text_3"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="3" />
 
             <TextView
                 android:id="@+id/tv_address"
-                style="@style/text_3"
+                style="@style/text_2"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="2"

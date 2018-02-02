@@ -14,6 +14,7 @@ import com.hyst.bus.activity.RoutePlanActivity;
 import com.hyst.bus.activity.SetPointActivity;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
+import com.hyst.bus.dialog.DeleteDialog;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.cache.RouteCache;
 import com.hyst.bus.model.event.SetPointEvent;
@@ -40,7 +41,7 @@ public class RouteFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
     private List<RouteCache> data;
-
+    private DeleteDialog deleteDialog;
 
     @Override
     protected int setLayoutId() {
@@ -77,6 +78,7 @@ public class RouteFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        deleteDialog = new DeleteDialog(context);
         data = RouteCacheUtil.getCache(context);
         if (data == null || data.size() == 0) {
             tv_clear.setText("暂无历史记录");
@@ -172,11 +174,16 @@ public class RouteFragment extends BaseFragment {
                 startActivity(intent);
                 break;
             case R.id.tv_clear:
-                RouteCacheUtil.clearCache(context);
-                data.clear();
-                adapter.setDatas(data);
-                tv_clear.setText("暂无历史记录");
+                if (data != null && data.size() > 0) {
+                    deleteDialog.showDialog("RouteCache", this);
+                }
                 break;
         }
+    }
+
+    public void delete() {
+        data.clear();
+        adapter.setDatas(data);
+        tv_clear.setText("暂无历史记录");
     }
 }
