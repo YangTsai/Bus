@@ -3,6 +3,7 @@ package com.hyst.bus.model.event;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amap.api.location.AMapLocation;
 import com.amap.api.services.core.LatLonPoint;
 
 import java.io.Serializable;
@@ -24,6 +25,8 @@ public class SetPointEvent implements Parcelable,Serializable {
 
     //
     private LatLonPoint latLonPoint;
+    //位置相关信息
+    private AMapLocation aMapLocation;
 
 
     public SetPointEvent(String tag,String pointType, String content,LatLonPoint latLonPoint) {
@@ -69,6 +72,13 @@ public class SetPointEvent implements Parcelable,Serializable {
         return tag;
     }
 
+    public void setaMapLocation(AMapLocation aMapLocation) {
+        this.aMapLocation = aMapLocation;
+    }
+
+    public AMapLocation getaMapLocation() {
+        return aMapLocation;
+    }
 
     @Override
     public int describeContents() {
@@ -81,6 +91,7 @@ public class SetPointEvent implements Parcelable,Serializable {
         dest.writeString(this.type);
         dest.writeString(this.content);
         dest.writeParcelable(this.latLonPoint, flags);
+        dest.writeParcelable(this.aMapLocation, flags);
     }
 
     protected SetPointEvent(Parcel in) {
@@ -88,6 +99,7 @@ public class SetPointEvent implements Parcelable,Serializable {
         this.type = in.readString();
         this.content = in.readString();
         this.latLonPoint = in.readParcelable(LatLonPoint.class.getClassLoader());
+        this.aMapLocation = in.readParcelable(AMapLocation.class.getClassLoader());
     }
 
     public static final Creator<SetPointEvent> CREATOR = new Creator<SetPointEvent>() {

@@ -1,6 +1,5 @@
 package com.hyst.bus.activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,30 +8,19 @@ import android.widget.TextView;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
-import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
-import com.amap.api.maps.model.MarkerOptions;
-import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.services.busline.BusLineItem;
-import com.amap.api.services.busline.BusLineQuery;
-import com.amap.api.services.busline.BusLineResult;
-import com.amap.api.services.busline.BusLineSearch;
-import com.amap.api.services.busline.BusStationItem;
-import com.amap.api.services.core.AMapException;
 import com.hyst.bus.R;
+import com.hyst.bus.custom.BusLineOverlay;
 import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.util.LocationUtil;
-import com.hyst.bus.util.ToastUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Administrator on 2018/1/24.
  */
 
-public class BusMapActivity extends BaseActivity implements BusLineSearch.OnBusLineSearchListener, AMap.OnMapLoadedListener,
+public class BusMapActivity extends BaseActivity implements AMap.OnMapLoadedListener,
         AMap.OnMapClickListener, AMap.InfoWindowAdapter {
 
     private MapView mapView;
@@ -40,7 +28,6 @@ public class BusMapActivity extends BaseActivity implements BusLineSearch.OnBusL
     private ImageView iv_back;
     private Bundle savedInstanceState;
     //
-    private BusLineQuery busLineQuery;
 
     private Marker mMarker;
 
@@ -74,20 +61,18 @@ public class BusMapActivity extends BaseActivity implements BusLineSearch.OnBusL
 
     @Override
     protected void initData() {
-        LocationCache locationCache =  LocationUtil.getIns(this).getCurrentLocation();
-        aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(locationCache.getLatitude(), locationCache.getLongitude())));
-        String bus = getIntent().getStringExtra("bus");
-        busLineQuery = new BusLineQuery(bus, BusLineQuery.SearchType.BY_LINE_NAME,locationCache.getCityName());
-        busLineQuery.setPageSize(1);
-        busLineQuery.setPageNumber(1);
-        BusLineSearch busLineSearch = new BusLineSearch(this, busLineQuery);
-        busLineSearch.setOnBusLineSearchListener(this);
-        busLineSearch.searchBusLineAsyn();
+
     }
 
     @Override
     public void onMapLoaded() {
-
+        BusLineItem busLineItem = getIntent().getParcelableExtra("bus");
+        LocationCache locationCache = LocationUtil.getIns(this).getCurrentLocation();
+        aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(locationCache.getLatitude(), locationCache.getLongitude())));
+        BusLineOverlay busLineOverlay = new BusLineOverlay(this, aMap, busLineItem);
+        busLineOverlay.removeFromMap();
+        busLineOverlay.addToMap();
+        busLineOverlay.zoomToSpan();
     }
 
     /**
@@ -135,39 +120,5 @@ public class BusMapActivity extends BaseActivity implements BusLineSearch.OnBusL
         TextView tv_mark = (TextView) infoContent.findViewById(R.id.tv_mark);
         tv_mark.setText(marker.getTitle());
         return infoContent;
-    }
-
-    @Override
-    public void onBusLineSearched(BusLineResult result, int rCode) {
-        if (rCode == AMapException.CODE_AMAP_SUCCESS) {
-            if (result != null && result.getQuery() != null
-                    && result.getQuery().equals(busLineQuery)) {
-                if (result.getQuery().getCategory() == BusLineQuery.SearchType.BY_LINE_NAME) {
-                    if (result.getPageCount() > 0 && result.getBusLines() != null
-                            && result.getBusLines().size() > 0) {
-                        List<BusLineItem> lines = result.getBusLines();
-                        BusLineItem busLineItem = lines.get(0);
-                        List<BusStationItem> busStations = busLineItem.getBusStations();
-                        List<LatLng> latLngs = new ArrayList<>();
-                        for (BusStationItem item : busStations) {
-                            LatLng latLng = new LatLng(item.getLatLonPoint().getLatitude(), item.getLatLonPoint().getLongitude());
-                            latLngs.add(latLng);
-                            aMap.moveCamera(CameraUpdateFactory.zoomTo(12));
-
-                            aMap.addMarker(new MarkerOptions().position(latLng).title(item.getBusStationName()).icon(
-                                    BitmapDescriptorFactory.fromResource(R.drawable.map_route_yuan)));
-                        }
-                        aMap.addPolyline(new PolylineOptions().
-                                addAll(latLngs).width(20).color(Color.parseColor("#00EE00")));
-                    }
-                } else {
-                    ToastUtil.show(this, R.string.no_result);
-                }
-            } else {
-                ToastUtil.show(this, R.string.no_result);
-            }
-        } else {
-            ToastUtil.show(this, rCode);
-        }
     }
 }

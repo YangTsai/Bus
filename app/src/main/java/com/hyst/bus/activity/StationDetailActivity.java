@@ -2,6 +2,7 @@ package com.hyst.bus.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -55,6 +56,8 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
     private BusLineSearch busLineSearch;
     private String searchRoute;
     private boolean reverse = true;
+    //
+    private BusLineItem busLineItem;
 
     @Override
     protected int setLayoutId() {
@@ -131,7 +134,6 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
                     if (result.getPageCount() > 0 && result.getBusLines() != null
                             && result.getBusLines().size() > 0) {
                         List<BusLineItem> lines = result.getBusLines();
-                        BusLineItem busLineItem;
                         if (lines != null && lines.size() > 0) {
                             if (reverse && lines.size() > 1) {
                                 busLineItem = lines.get(0);
@@ -160,7 +162,7 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
                         if (busLineItem.getBasicPrice() != 0) {
                             price = busLineItem.getBasicPrice();
                         }
-                        tv_detail.setText("首班 " + startTime + "  末班 " + endTime + "  票价 " + price);
+                        tv_detail.setText("首班 " + startTime + "  末班 " + endTime + "  票价 " + price + "元");
                         if (!TextUtils.isEmpty(busLineItem.getOriginatingStation()) && !TextUtils.isEmpty(busLineItem.getTerminalStation())) {
                             tv_name.setText(busLineItem.getOriginatingStation() + "---" + busLineItem.getTerminalStation());
                         }
@@ -195,7 +197,9 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
                 break;
             case R.id.tv_map:
                 Intent intent = new Intent(this, BusMapActivity.class);
-                intent.putExtra("bus", searchRoute);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("bus",busLineItem);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.iv_back:

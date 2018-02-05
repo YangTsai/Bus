@@ -21,6 +21,7 @@ import com.hyst.bus.model.BusInfo;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.cache.BusCache;
 import com.hyst.bus.model.cache.LocationCache;
+import com.hyst.bus.model.event.SetPointEvent;
 import com.hyst.bus.util.BusCacheUtil;
 import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.ToastUtil;
@@ -54,7 +55,6 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
 
     private PoiSearch.Query query;
     private PoiSearch poiSearch;
-
 
     private DeleteDialog deleteDialog;
 
@@ -137,19 +137,31 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
         };
         re_bus = ViewUtil.getVRowsNoLine(context, re_bus, 1);
         re_bus.setAdapter(adapter_bus);
-        //
-        LocationCache locationCache = LocationUtil.getIns(context).getCurrentLocation();
-        tv_city_name.setText(locationCache.getCityName());
-        query = new PoiSearch.Query(Constant.POI_BUS, "", locationCache.getCityName());
-        query.setPageSize(1);// 设置每页最多返回多少条poiitem
-        query.setPageNum(1);//设置查询页码
-        poiSearch = new PoiSearch(context, query);
-        poiSearch.setOnPoiSearchListener(this);
-        //设置周边搜索的中心点以及半径
-        poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(locationCache.getLatitude(), locationCache.getLongitude()), 1000));
-        poiSearch.searchPOIAsyn();
     }
 
+    public void setLocation(SetPointEvent event) {
+        if (event.getLatLonPoint() == null) {
+            LocationCache locationCache = LocationUtil.getIns(context).getCurrentLocation();
+            tv_city_name.setText(locationCache.getCityName());
+            query = new PoiSearch.Query(Constant.POI_BUS, "", locationCache.getCityName());
+            query.setPageSize(1);// 设置每页最多返回多少条poiitem
+            query.setPageNum(1);//设置查询页码
+            poiSearch = new PoiSearch(context, query);
+            poiSearch.setOnPoiSearchListener(this);
+            //设置周边搜索的中心点以及半径
+            poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(locationCache.getLatitude(), locationCache.getLongitude()), 1000));
+        } else {
+            tv_city_name.setText(event.getaMapLocation().getCity());
+            query = new PoiSearch.Query(Constant.POI_BUS, "", event.getaMapLocation().getCity());
+            query.setPageSize(1);// 设置每页最多返回多少条poiitem
+            query.setPageNum(1);//设置查询页码
+            poiSearch = new PoiSearch(context, query);
+            poiSearch.setOnPoiSearchListener(this);
+            //设置周边搜索的中心点以及半径
+            poiSearch.setBound(new PoiSearch.SearchBound(event.getLatLonPoint(), 1000));
+        }
+        poiSearch.searchPOIAsyn();
+    }
 
     private void updateData() {
         poiSearch.searchPOIAsyn();
@@ -231,4 +243,5 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
     public void onPoiItemSearched(PoiItem poiItem, int i) {
 
     }
+
 }

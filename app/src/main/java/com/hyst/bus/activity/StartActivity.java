@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.hyst.bus.R;
-import com.hyst.bus.util.LocationUtil;
 
 /**
  * Created by Administrator on 2018/1/10.
@@ -30,7 +29,6 @@ public class StartActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        LocationUtil.getIns(this).setLocation(getClass().getName(), false);
         new Handler().postAtTime(new Runnable() {
             @Override
             public void run() {

@@ -9,8 +9,9 @@
         style="@style/text_ty"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/white"
-        android:text="路线" />
+        android:background="@color/colorTheme"
+        android:text="路线"
+        android:textColor="@color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,22 +38,20 @@
 
             <TextView
                 style="@style/text_3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/btn_re_gray"
-                android:padding="5dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@color/green"
                 android:text="起"
-                android:textColor="@color/gray_font" />
+                android:textColor="@color/white" />
 
             <TextView
                 style="@style/text_3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/btn_re_gray"
-                android:padding="5dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/station_red2"
                 android:text="终"
-                android:textColor="@color/gray_font" />
+                android:textColor="@color/white" />
         </LinearLayout>
 
         <LinearLayout

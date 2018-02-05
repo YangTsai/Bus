@@ -16,6 +16,7 @@ import com.hyst.bus.fragment.MapFragment;
 import com.hyst.bus.fragment.RouteFragment;
 import com.hyst.bus.model.event.SetPointEvent;
 import com.hyst.bus.util.AppManager;
+import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.ToastUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -47,6 +48,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+        LocationUtil.getIns(this).setLocation(getClass().getName(), true);
     }
 
     @Override
@@ -62,6 +64,7 @@ public class MainActivity extends BaseActivity {
         setFragment(homeFragment);
         setBackGround(0);
     }
+
 
     @Override
     protected void initView() {
@@ -137,7 +140,12 @@ public class MainActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SetPointEvent event) {
-        if (event != null && event.getTag().equals(routeFragment.getClass().getName())) {
+        if (event != null && event.getTag().equals(getClass().getName())) {
+            //MainActivity的回调
+            homeFragment.setLocation(event);
+            mapFragment.setLocation(event);
+        } else if (event != null && event.getTag().equals(routeFragment.getClass().getName())) {
+            //RouteFragment的回调
             routeFragment.setLocation(event);
         }
     }
