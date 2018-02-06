@@ -32,6 +32,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2018/1/23.
@@ -84,7 +86,14 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
     @Override
     protected void initData() {
         searchRoute = getIntent().getStringExtra("bus");
-        tv_bus.setText(searchRoute + "路");
+        //判断是否是数字
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(searchRoute);
+        if(isNum.matches() ){
+            tv_bus.setText(searchRoute + "路");
+        }else {
+            tv_bus.setText(searchRoute);
+        }
         data = new ArrayList<>();
         adapter = new RecyclerAdapter<String>(this, data, R.layout.item_station) {
             @Override

@@ -31,8 +31,6 @@ import com.liaoinstan.springview.widget.SpringView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2018/1/16.
@@ -138,12 +136,8 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
                 holder.setOnClickListener(R.id.ll_bus_info, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String regEx = "[^0-9]";
-                        Pattern p = Pattern.compile(regEx);
-                        Matcher m = p.matcher(info.getBusName());
-                        System.out.println(m.replaceAll("").trim());
                         Intent intent = new Intent(context, StationDetailActivity.class);
-                        intent.putExtra("bus", m.replaceAll("").trim());
+                        intent.putExtra("bus", info.getBusName());
                         startActivity(intent);
                     }
                 });
