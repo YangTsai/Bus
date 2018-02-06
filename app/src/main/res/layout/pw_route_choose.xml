@@ -15,12 +15,29 @@
             android:background="@color/gray"></View>
 
         <TextView
-            android:id="@+id/tv_time"
+            android:id="@+id/tv_distance"
+            style="@style/text_3"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="最快捷" />
+
+        <TextView
+            android:id="@+id/tv_comfort"
+            style="@style/text_3"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="最舒适" />
+
+        <TextView
+            android:id="@+id/tv_money"
             style="@style/text_3"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:gravity="center"
-            android:text="时间少" />
+            android:text="最经济" />
+
 
         <TextView
             android:id="@+id/tv_walk"
@@ -30,13 +47,6 @@
             android:gravity="center"
             android:text="步行少" />
 
-        <TextView
-            android:id="@+id/tv_distance"
-            style="@style/text_3"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:text="距离短" />
 
         <TextView
             android:id="@+id/tv_exchange"
@@ -45,6 +55,14 @@
             android:layout_height="45dp"
             android:gravity="center"
             android:text="换乘少" />
+
+        <TextView
+            android:id="@+id/tv_no_subway"
+            style="@style/text_3"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:text="不乘地铁" />
     </LinearLayout>
 
 </RelativeLayout>

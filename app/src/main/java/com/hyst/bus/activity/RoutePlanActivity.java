@@ -12,7 +12,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.amap.api.services.core.AMapException;
-import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.route.BusPath;
 import com.amap.api.services.route.BusRouteResult;
 import com.amap.api.services.route.DriveRouteResult;
@@ -37,8 +36,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -133,17 +130,18 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
         //
         routeSearch = new RouteSearch(this);
         routeSearch.setRouteSearchListener(this);
-        searchRoute(startPoint.getLatLonPoint(), endPoint.getLatLonPoint());
+        searchRoute(RouteSearch.BUS_DEFAULT);
     }
 
     /**
-     * @param startPoint 起点
-     * @param endPoint   终点
+     * 按方式搜索方案
+     *
+     * @param mode
      */
-    private void searchRoute(LatLonPoint startPoint, LatLonPoint endPoint) {
-        RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(startPoint, endPoint);
+    private void searchRoute(int mode) {
+        RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(startPoint.getLatLonPoint(), endPoint.getLatLonPoint());
         LocationCache locationCache = LocationUtil.getIns(this).getCurrentLocation();
-        query = new RouteSearch.BusRouteQuery(fromAndTo, RouteSearch.BusLeaseWalk, locationCache.getCityName(), 0);
+        query = new RouteSearch.BusRouteQuery(fromAndTo, mode, locationCache.getCityName(), 0);
         //开始规划路径
         routeSearch.calculateBusRouteAsyn(query);
     }
@@ -164,7 +162,7 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
                     endPoint = event;
                     tv_start.setText(startPoint.getContent());
                     tv_end.setText(endPoint.getContent());
-                    searchRoute(startPoint.getLatLonPoint(), endPoint.getLatLonPoint());
+                    searchRoute(RouteSearch.BUS_DEFAULT);
                 }
                 break;
             case R.id.tv_start:
@@ -195,16 +193,15 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
     private void setRoutePw() {
         if (popupWindow == null) {
             View contentView = LayoutInflater.from(this).inflate(R.layout.pw_route_choose, null);
-            final TextView tv_time = (TextView) contentView.findViewById(R.id.tv_time);
             final TextView tv_walk = (TextView) contentView.findViewById(R.id.tv_walk);
+            final TextView tv_money = (TextView) contentView.findViewById(R.id.tv_money);
+            final TextView tv_comfort = (TextView) contentView.findViewById(R.id.tv_comfort);
             final TextView tv_distance = (TextView) contentView.findViewById(R.id.tv_distance);
             final TextView tv_exchange = (TextView) contentView.findViewById(R.id.tv_exchange);
+            final TextView tv_no_subway = (TextView) contentView.findViewById(R.id.tv_no_subway);
             popupWindow = new AppPopupWindow(contentView,
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-            //实例化一个ColorDrawable颜色为半透明，已达到变暗的效果
-            final ColorDrawable dw = new ColorDrawable(0xb0000000);
-            // 如果不设置PopupWindow的背景，无论是点击外部区域还是Back键都无法dismiss弹框
-            // 我觉得这里是API的一个bug
+            ColorDrawable dw = new ColorDrawable(0xb0000000);
             popupWindow.setTouchable(true);
             popupWindow.setOutsideTouchable(true);
             popupWindow.setBackgroundDrawable(dw);
@@ -215,63 +212,57 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
                     adapter.setDatas(data);
                 }
             });
-            tv_time.setOnClickListener(new View.OnClickListener() {
+            //最经济
+            tv_money.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Collections.sort(data, new Comparator<BusPath>() {
-
-                        @Override
-                        public int compare(BusPath path1, BusPath path2) {
-                            long i = path1.getDuration() - path2.getDuration();
-                            return (int) i * 1000;
-                        }
-                    });
-                    tv_route_choose.setText(tv_time.getText().toString());
+                    searchRoute(RouteSearch.BUS_SAVE_MONEY);
+                    tv_route_choose.setText(tv_money.getText().toString());
                     popupWindow.dismiss();
                 }
             });
+            //最舒适
+            tv_comfort.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    searchRoute(RouteSearch.BUS_COMFORTABLE);
+                    tv_route_choose.setText(tv_comfort.getText().toString());
+                    popupWindow.dismiss();
+                }
+            });
+            //步行最少
             tv_walk.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Collections.sort(data, new Comparator<BusPath>() {
-
-                        @Override
-                        public int compare(BusPath path1, BusPath path2) {
-                            float i = path1.getWalkDistance() - path2.getWalkDistance();
-                            return (int) (i * 1000);
-                        }
-                    });
+                    searchRoute(RouteSearch.BUS_LEASE_WALK);
                     tv_route_choose.setText(tv_walk.getText().toString());
                     popupWindow.dismiss();
                 }
             });
+            //距离最短（最快捷）
             tv_distance.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Collections.sort(data, new Comparator<BusPath>() {
-
-                        @Override
-                        public int compare(BusPath path1, BusPath path2) {
-                            float i = path1.getDistance() - path2.getDistance();
-                            return (int) (i * 1000);
-                        }
-                    });
+                    searchRoute(RouteSearch.BUS_DEFAULT);
                     tv_route_choose.setText(tv_distance.getText().toString());
                     popupWindow.dismiss();
                 }
             });
+            //最少换乘
             tv_exchange.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Collections.sort(data, new Comparator<BusPath>() {
-
-                        @Override
-                        public int compare(BusPath path1, BusPath path2) {
-                            int i = path1.getSteps().size() - path2.getSteps().size();
-                            return i;
-                        }
-                    });
+                    searchRoute(RouteSearch.BUS_LEASE_CHANGE);
                     tv_route_choose.setText(tv_exchange.getText().toString());
+                    popupWindow.dismiss();
+                }
+            });
+            //不做地铁
+            tv_no_subway.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    searchRoute(RouteSearch.BUS_NO_SUBWAY);
+                    tv_route_choose.setText(tv_no_subway.getText().toString());
                     popupWindow.dismiss();
                 }
             });
@@ -291,6 +282,7 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
                 ToastUtil.show(this, R.string.no_result);
             }
         } else {
+            data = null;
             adapter.setDatas(data);
             ToastUtil.show(this, "错误码：" + errorCode);
         }
@@ -307,7 +299,7 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
                 endPoint = event;
             }
             if (startPoint != null && endPoint != null) {
-                searchRoute(startPoint.getLatLonPoint(), endPoint.getLatLonPoint());
+                searchRoute(RouteSearch.BUS_DEFAULT);
             }
         }
     }
