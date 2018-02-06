@@ -193,10 +193,10 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
     private void setRoutePw() {
         if (popupWindow == null) {
             View contentView = LayoutInflater.from(this).inflate(R.layout.pw_route_choose, null);
+            final TextView tv_distance = (TextView) contentView.findViewById(R.id.tv_distance);
             final TextView tv_walk = (TextView) contentView.findViewById(R.id.tv_walk);
             final TextView tv_money = (TextView) contentView.findViewById(R.id.tv_money);
             final TextView tv_comfort = (TextView) contentView.findViewById(R.id.tv_comfort);
-            final TextView tv_distance = (TextView) contentView.findViewById(R.id.tv_distance);
             final TextView tv_exchange = (TextView) contentView.findViewById(R.id.tv_exchange);
             final TextView tv_no_subway = (TextView) contentView.findViewById(R.id.tv_no_subway);
             popupWindow = new AppPopupWindow(contentView,
@@ -210,6 +210,15 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
                 public void onDismiss() {
                     iv_route_choose.setImageResource(R.drawable.layer_top);
                     adapter.setDatas(data);
+                }
+            });
+            //推荐路线、距离最短（最快捷）
+            tv_distance.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    searchRoute(RouteSearch.BUS_DEFAULT);
+                    tv_route_choose.setText(tv_distance.getText().toString());
+                    popupWindow.dismiss();
                 }
             });
             //最经济
@@ -236,15 +245,6 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
                 public void onClick(View v) {
                     searchRoute(RouteSearch.BUS_LEASE_WALK);
                     tv_route_choose.setText(tv_walk.getText().toString());
-                    popupWindow.dismiss();
-                }
-            });
-            //距离最短（最快捷）
-            tv_distance.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    searchRoute(RouteSearch.BUS_DEFAULT);
-                    tv_route_choose.setText(tv_distance.getText().toString());
                     popupWindow.dismiss();
                 }
             });
