@@ -1,10 +1,12 @@
 package com.hyst.bus.model;
 
+import com.amap.api.maps.model.LatLng;
+
 /**
  * Created by Administrator on 2018/1/26.
  */
 
-public class BusInfo {
+public class BusStationInfo {
 
     /**
      * 当前站点（站点定位地址）
@@ -34,6 +36,11 @@ public class BusInfo {
      * 下一辆公交车还有多少时间到达
      */
     private String nextComeTime;
+
+    /**
+     * 当前站点的经纬度
+     */
+    private LatLng latLng;
 
     public String getStationName() {
         return stationName;
@@ -81,5 +88,13 @@ public class BusInfo {
 
     public void setNextComeTime(String nextComeTime) {
         this.nextComeTime = nextComeTime;
+    }
+
+    public void setLatLng(LatLng latLng) {
+        this.latLng = latLng;
+    }
+
+    public LatLng getLatLng() {
+        return latLng;
     }
 }

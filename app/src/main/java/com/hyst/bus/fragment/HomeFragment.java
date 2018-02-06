@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.poisearch.PoiResult;
@@ -17,7 +19,7 @@ import com.hyst.bus.activity.StationDetailActivity;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
 import com.hyst.bus.dialog.DeleteDialog;
-import com.hyst.bus.model.BusInfo;
+import com.hyst.bus.model.BusStationInfo;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.cache.BusCache;
 import com.hyst.bus.model.cache.LocationCache;
@@ -46,7 +48,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
     //
     private RecyclerView re_bus;
     private RecyclerAdapter adapter_bus;
-    private List<BusInfo> data_bus;
+    private List<BusStationInfo> data_bus;
     //
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
@@ -57,6 +59,8 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
     private PoiSearch poiSearch;
 
     private DeleteDialog deleteDialog;
+
+    private LatLng latLng;
 
     @Override
     protected int setLayoutId() {
@@ -121,15 +125,21 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
         recyclerView = ViewUtil.getVRowsNoLine(context, recyclerView, 1);
         recyclerView.setAdapter(adapter);
         //
-        adapter_bus = new RecyclerAdapter<BusInfo>(context, data_bus, R.layout.item_home_bus) {
+        adapter_bus = new RecyclerAdapter<BusStationInfo>(context, data_bus, R.layout.item_home_bus) {
             @Override
-            public void convert(final RecyclerHolder holder, final BusInfo info) {
+            public void convert(final RecyclerHolder holder, final BusStationInfo info) {
                 if (holder.getAdapterPosition() == 0) {
                     holder.getView(R.id.view_line).setVisibility(View.VISIBLE);
                     holder.getView(R.id.rl_address).setVisibility(View.VISIBLE);
                 } else {
                     holder.getView(R.id.view_line).setVisibility(View.GONE);
                     holder.getView(R.id.rl_address).setVisibility(View.GONE);
+                }
+                float distance = AMapUtils.calculateLineDistance(info.getLatLng(), latLng);
+                if(distance > 1000){
+                    holder.setText(R.id.tv_distance, "大于1000米");
+                }else {
+                    holder.setText(R.id.tv_distance, (int)distance + "米");
                 }
                 holder.setText(R.id.tv_station_name, info.getStationName());
                 holder.setText(R.id.tv_bus_name, info.getBusName());
@@ -150,6 +160,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
     public void setLocation(SetPointEvent event) {
         if (event.getLatLonPoint() == null) {
             LocationCache locationCache = LocationUtil.getIns(context).getCurrentLocation();
+            latLng = new LatLng(locationCache.getLatitude(), locationCache.getLongitude());
             tv_city_name.setText(locationCache.getCityName());
             query = new PoiSearch.Query(Constant.POI_BUS, "", locationCache.getCityName());
             query.setPageSize(1);// 设置每页最多返回多少条poiitem
@@ -159,6 +170,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
             //设置周边搜索的中心点以及半径
             poiSearch.setBound(new PoiSearch.SearchBound(new LatLonPoint(locationCache.getLatitude(), locationCache.getLongitude()), 1000));
         } else {
+            latLng = new LatLng(event.getLatLonPoint().getLatitude(), event.getLatLonPoint().getLongitude());
             tv_city_name.setText(event.getaMapLocation().getCity());
             query = new PoiSearch.Query(Constant.POI_BUS, "", event.getaMapLocation().getCity());
             query.setPageSize(1);// 设置每页最多返回多少条poiitem
@@ -220,25 +232,28 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
             data_bus.clear();
             ArrayList<PoiItem> pois = poiResult.getPois();
             if (pois != null && pois.size() > 0) {
+                LatLonPoint latLonPoint = pois.get(0).getLatLonPoint();
                 String snippet = pois.get(0).getSnippet();
                 String title = pois.get(0).getTitle();
                 if (!TextUtils.isEmpty(snippet)) {
                     if (snippet.contains(";")) {
                         String[] split = snippet.split(";");
                         for (int j = 0; j < split.length; j++) {
-                            BusInfo busInfo = new BusInfo();
-                            busInfo.setStationName(title);
-                            busInfo.setBusName(split[j]);
-                            data_bus.add(busInfo);
+                            BusStationInfo busStationInfo = new BusStationInfo();
+                            busStationInfo.setStationName(title);
+                            busStationInfo.setLatLng(new LatLng(latLonPoint.getLatitude(), latLonPoint.getLongitude()));
+                            busStationInfo.setBusName(split[j]);
+                            data_bus.add(busStationInfo);
                             if (j == 1) {
                                 break;
                             }
                         }
                     } else {
-                        BusInfo busInfo = new BusInfo();
-                        busInfo.setStationName(title);
-                        busInfo.setBusName(snippet);
-                        data_bus.add(busInfo);
+                        BusStationInfo busStationInfo = new BusStationInfo();
+                        busStationInfo.setStationName(title);
+                        busStationInfo.setBusName(snippet);
+                        busStationInfo.setLatLng(new LatLng(latLonPoint.getLatitude(), latLonPoint.getLongitude()));
+                        data_bus.add(busStationInfo);
                     }
                     adapter_bus.setDatas(data_bus);
                 }

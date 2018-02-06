@@ -16,13 +16,14 @@
             android:id="@+id/iv_back"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:padding="15dp"
             android:layout_marginRight="5dp"
+            android:padding="15dp"
             android:src="@drawable/ic_back" />
 
         <ImageView
-            android:layout_width="10dp"
-            android:layout_height="match_parent"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_green_round" />
 
         <EditText
@@ -48,33 +49,53 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:layout_marginTop="1dp"
         android:background="@color/white"
+        android:gravity="center"
         android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_go_time"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="2dp"
+            android:src="@drawable/route_location" />
 
         <TextView
             android:id="@+id/tv_location"
             style="@style/text_ty"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:text="我的位置"
-            android:textColor="@color/colorTheme" />
+            android:textColor="@color/station_red2" />
+
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
             android:background="@color/gray"></View>
+
+        <ImageView
+            android:id="@+id/iv_route_choose"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="2dp"
+            android:src="@drawable/map_on" />
 
         <TextView
             android:id="@+id/tv_map_location"
             style="@style/text_ty"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:text="地图选取"
             android:textColor="@color/colorTheme" />
+
+
     </LinearLayout>
 
     <LinearLayout

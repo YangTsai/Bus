@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -51,8 +50,8 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
     private TextView tv_end;
     private ImageView iv_back;
     private ImageView iv_exchange;
-    private Button tv_go_time;
-    private Button tv_route_choose;
+    private TextView tv_go_time;
+    private TextView tv_route_choose;
     private ImageView iv_go_time;
     private ImageView iv_route_choose;
     //
@@ -91,8 +90,8 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
         iv_exchange = (ImageView) findViewById(R.id.iv_exchange);
         iv_exchange.setOnClickListener(this);
         iv_back = (ImageView) findViewById(R.id.iv_back);
-        tv_go_time = (Button) findViewById(R.id.tv_go_time);
-        tv_route_choose = (Button) findViewById(R.id.tv_route_choose);
+        tv_go_time = (TextView) findViewById(R.id.tv_go_time);
+        tv_route_choose = (TextView) findViewById(R.id.tv_route_choose);
         iv_go_time = (ImageView) findViewById(R.id.iv_go_time);
         iv_route_choose = (ImageView) findViewById(R.id.iv_route_choose);
         tv_go_time.setOnClickListener(this);
