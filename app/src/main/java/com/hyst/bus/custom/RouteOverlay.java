@@ -190,7 +190,7 @@ public class RouteOverlay {
 	}
 	
 	protected float getRouteWidth() {
-		return 18f;
+		return 20f;
 	}
 
 	protected int getWalkColor() {
@@ -203,7 +203,7 @@ public class RouteOverlay {
 	 * @since V2.2.1
 	 */
 	protected int getBusColor() {
-		return Color.parseColor("#00EE00");
+		return Color.parseColor("#1296db");
 	}
 
 	protected int getDriveColor() {
