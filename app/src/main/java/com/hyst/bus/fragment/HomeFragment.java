@@ -15,6 +15,7 @@ import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.hyst.bus.R;
+import com.hyst.bus.activity.CityListActivity;
 import com.hyst.bus.activity.StationDetailActivity;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
@@ -214,7 +215,8 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
                 }
                 break;
             case R.id.tv_city:
-
+                intent = new Intent(context, CityListActivity.class);
+                startActivity(intent);
                 break;
         }
     }
