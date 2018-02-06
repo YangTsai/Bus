@@ -76,8 +76,7 @@
                 style="@style/text_3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:textColor="@color/gray_font" />
+                android:gravity="center_vertical" />
 
             <ImageView
                 android:id="@+id/iv_exchange"
