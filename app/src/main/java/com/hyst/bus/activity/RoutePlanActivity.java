@@ -1,10 +1,15 @@
 package com.hyst.bus.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.amap.api.services.core.AMapException;
@@ -18,6 +23,7 @@ import com.amap.api.services.route.WalkRouteResult;
 import com.hyst.bus.R;
 import com.hyst.bus.adapter.RecyclerAdapter;
 import com.hyst.bus.constant.Constant;
+import com.hyst.bus.custom.AppPopupWindow;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.cache.LocationCache;
 import com.hyst.bus.model.event.SetPointEvent;
@@ -32,6 +38,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -43,6 +51,10 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
     private TextView tv_end;
     private ImageView iv_back;
     private ImageView iv_exchange;
+    private Button tv_go_time;
+    private Button tv_route_choose;
+    private ImageView iv_go_time;
+    private ImageView iv_route_choose;
     //
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
@@ -54,6 +66,8 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
     //
     private RouteSearch routeSearch;
     private RouteSearch.BusRouteQuery query;
+    //
+    private AppPopupWindow popupWindow;
 
 
     @Override
@@ -77,7 +91,13 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
         iv_exchange = (ImageView) findViewById(R.id.iv_exchange);
         iv_exchange.setOnClickListener(this);
         iv_back = (ImageView) findViewById(R.id.iv_back);
+        tv_go_time = (Button) findViewById(R.id.tv_go_time);
+        tv_route_choose = (Button) findViewById(R.id.tv_route_choose);
+        iv_go_time = (ImageView) findViewById(R.id.iv_go_time);
+        iv_route_choose = (ImageView) findViewById(R.id.iv_route_choose);
+        tv_go_time.setOnClickListener(this);
         iv_back.setOnClickListener(this);
+        tv_route_choose.setOnClickListener(this);
     }
 
     @Override
@@ -87,7 +107,7 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
         if (startPoint == null && endPoint == null) {
             return;
         }
-        RouteCacheUtil.setCache(this,startPoint,endPoint);
+        RouteCacheUtil.setCache(this, startPoint, endPoint);
         tv_start.setText(startPoint.getContent());
         tv_end.setText(endPoint.getContent());
         data = new ArrayList<>();
@@ -160,7 +180,104 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
                 intent.putExtra(Constant.POINT_TAG, getClass().getName());
                 startActivity(intent);
                 break;
+            case R.id.tv_route_choose:
+                tv_route_choose.setTextColor(getResources().getColor(R.color.colorFont));
+                tv_go_time.setTextColor(getResources().getColor(R.color.colorGray));
+                iv_route_choose.setImageResource(R.drawable.layer_down);
+                setRoutePw();
+                break;
+            case R.id.tv_go_time:
+                tv_go_time.setTextColor(getResources().getColor(R.color.colorFont));
+                tv_route_choose.setTextColor(getResources().getColor(R.color.colorGray));
+                break;
         }
+    }
+
+    private void setRoutePw() {
+        if (popupWindow == null) {
+            View contentView = LayoutInflater.from(this).inflate(R.layout.pw_route_choose, null);
+            final TextView tv_time = (TextView) contentView.findViewById(R.id.tv_time);
+            final TextView tv_walk = (TextView) contentView.findViewById(R.id.tv_walk);
+            final TextView tv_distance = (TextView) contentView.findViewById(R.id.tv_distance);
+            final TextView tv_exchange = (TextView) contentView.findViewById(R.id.tv_exchange);
+            popupWindow = new AppPopupWindow(contentView,
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+            //实例化一个ColorDrawable颜色为半透明，已达到变暗的效果
+            final ColorDrawable dw = new ColorDrawable(0xb0000000);
+            // 如果不设置PopupWindow的背景，无论是点击外部区域还是Back键都无法dismiss弹框
+            // 我觉得这里是API的一个bug
+            popupWindow.setTouchable(true);
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.setBackgroundDrawable(dw);
+            popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    iv_route_choose.setImageResource(R.drawable.layer_top);
+                    adapter.setDatas(data);
+                }
+            });
+            tv_time.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Collections.sort(data, new Comparator<BusPath>() {
+
+                        @Override
+                        public int compare(BusPath path1, BusPath path2) {
+                            long i = path1.getDuration() - path2.getDuration();
+                            return (int) i * 1000;
+                        }
+                    });
+                    tv_route_choose.setText(tv_time.getText().toString());
+                    popupWindow.dismiss();
+                }
+            });
+            tv_walk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Collections.sort(data, new Comparator<BusPath>() {
+
+                        @Override
+                        public int compare(BusPath path1, BusPath path2) {
+                            float i = path1.getWalkDistance() - path2.getWalkDistance();
+                            return (int) (i * 1000);
+                        }
+                    });
+                    tv_route_choose.setText(tv_walk.getText().toString());
+                    popupWindow.dismiss();
+                }
+            });
+            tv_distance.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Collections.sort(data, new Comparator<BusPath>() {
+
+                        @Override
+                        public int compare(BusPath path1, BusPath path2) {
+                            float i = path1.getDistance() - path2.getDistance();
+                            return (int) (i * 1000);
+                        }
+                    });
+                    tv_route_choose.setText(tv_distance.getText().toString());
+                    popupWindow.dismiss();
+                }
+            });
+            tv_exchange.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Collections.sort(data, new Comparator<BusPath>() {
+
+                        @Override
+                        public int compare(BusPath path1, BusPath path2) {
+                            int i = path1.getSteps().size() - path2.getSteps().size();
+                            return i;
+                        }
+                    });
+                    tv_route_choose.setText(tv_exchange.getText().toString());
+                    popupWindow.dismiss();
+                }
+            });
+        }
+        popupWindow.showAsDropDown(tv_route_choose);
     }
 
     @Override
@@ -168,13 +285,14 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
         if (errorCode == AMapException.CODE_AMAP_SUCCESS) {
             if (result != null && result.getPaths() != null && result.getPaths().size() > 0) {
                 mBusRouteResult = result;
+                data = result.getPaths();
                 adapter.setDatas(result.getPaths());
             } else {
-                adapter.setDatas(null);
+                adapter.setDatas(data);
                 ToastUtil.show(this, R.string.no_result);
             }
         } else {
-            adapter.setDatas(null);
+            adapter.setDatas(data);
             ToastUtil.show(this, "错误码：" + errorCode);
         }
     }

@@ -6,7 +6,6 @@
     android:orientation="vertical">
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -17,8 +16,8 @@
             android:id="@+id/iv_back"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:padding="15dp"
             android:layout_marginRight="10dp"
+            android:padding="15dp"
             android:src="@drawable/ic_back" />
 
         <LinearLayout
@@ -82,29 +81,48 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:layout_marginTop="1dp"
         android:background="@color/white"
+        android:gravity="center"
         android:orientation="horizontal">
 
-        <TextView
+        <Button
+            android:id="@+id/tv_go_time"
             style="@style/text_3"
-            android:layout_width="0dp"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:background="@color/transparent"
             android:text="现在出发" />
+
+        <ImageView
+            android:id="@+id/iv_go_time"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:src="@drawable/layer_top" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
             android:background="@color/gray"></View>
 
-        <TextView
+        <Button
+            android:id="@+id/tv_route_choose"
             style="@style/text_3"
-            android:layout_width="0dp"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:background="@color/transparent"
             android:text="推荐路线" />
+
+        <ImageView
+            android:id="@+id/iv_route_choose"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:src="@drawable/layer_top" />
     </LinearLayout>
 
     <LinearLayout
@@ -124,14 +142,20 @@
             android:text="搜索结果"
             android:textColor="@color/line" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <com.hyst.bus.custom.RollbackNestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/white">
+            android:layout_height="wrap_content">
 
-        </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:nestedScrollingEnabled="false">
+
+            </android.support.v7.widget.RecyclerView>
+        </com.hyst.bus.custom.RollbackNestedScrollView>
     </LinearLayout>
 
 </LinearLayout>
