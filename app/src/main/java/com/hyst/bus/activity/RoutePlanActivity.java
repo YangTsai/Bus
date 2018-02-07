@@ -110,6 +110,11 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
         adapter = new RecyclerAdapter<BusPath>(this, data, R.layout.item_route_plan) {
             @Override
             public void convert(RecyclerHolder holder, final BusPath path) {
+                if(holder.getAdapterPosition() == 0){
+                    holder.getView(R.id.tv_recommend).setVisibility(View.VISIBLE);
+                }else {
+                    holder.getView(R.id.tv_recommend).setVisibility(View.GONE);
+                }
                 holder.setText(R.id.tv_name, AMapUtil.getBusPathTitle(path));
                 holder.setText(R.id.tv_address, AMapUtil.getBusPathDes(path));
                 holder.setOnClickListener(R.id.ll_point, new View.OnClickListener() {

@@ -6,26 +6,41 @@
     android:minHeight="90dp"
     android:orientation="vertical">
 
-
-    <TextView
-        android:id="@+id/tv_name"
-        style="@style/text_ty"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:lineSpacingExtra="1.2dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="10dp"
-        android:gravity="center_vertical"
-        android:layout_weight="2" />
+        android:layout_marginRight="20dp"
+        android:layout_weight="2"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_name"
+            style="@style/text_ty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:lineSpacingExtra="1.2dp" />
+
+        <TextView
+            android:id="@+id/tv_recommend"
+            style="@style/text_2"
+            android:layout_width="30dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:background="@color/green"
+            android:text="最佳"
+            android:textColor="@color/white" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_address"
         style="@style/text_3"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
         android:layout_weight="1"
         android:textColor="@color/gray_font" />
 
