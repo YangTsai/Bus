@@ -85,15 +85,16 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
 
     @Override
     protected void initData() {
-        searchRoute = getIntent().getStringExtra("bus");
+        String busName = getIntent().getStringExtra("bus");
         //判断是否是数字
         Pattern pattern = Pattern.compile("[0-9]*");
-        Matcher isNum = pattern.matcher(searchRoute);
-        if(isNum.matches() ){
-            tv_bus.setText(searchRoute + "路");
-        }else {
-            tv_bus.setText(searchRoute);
+        Matcher isNum = pattern.matcher(busName);
+        if (isNum.matches()) {
+            searchRoute = busName + "路";
+        } else {
+            searchRoute = busName;
         }
+        tv_bus.setText(searchRoute);
         data = new ArrayList<>();
         adapter = new RecyclerAdapter<String>(this, data, R.layout.item_station) {
             @Override
@@ -113,7 +114,7 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
                     if (holder.getAdapterPosition() == 10 || holder.getAdapterPosition() == 17) {
                         holder.getView(R.id.iv_bus).setVisibility(View.VISIBLE);
                         holder.setImageResource(R.id.iv_bus, R.drawable.ic_bus_route);
-                        holder.getView(R.id.iv_bus).setPadding(0,0,0,0);
+                        holder.getView(R.id.iv_bus).setPadding(0, 0, 0, 0);
                     }
                 }
             }
@@ -207,7 +208,7 @@ public class StationDetailActivity extends BaseActivity implements BusLineSearch
             case R.id.tv_map:
                 Intent intent = new Intent(this, BusMapActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putParcelable("bus",busLineItem);
+                bundle.putParcelable("bus", busLineItem);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;

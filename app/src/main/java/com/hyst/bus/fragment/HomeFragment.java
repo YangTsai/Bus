@@ -111,7 +111,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
         adapter = new RecyclerAdapter<BusCache>(context, data, R.layout.item_bus_history) {
             @Override
             public void convert(final RecyclerHolder holder, final BusCache cache) {
-                holder.setText(R.id.tv_name, cache.getBusName() + "路");
+                holder.setText(R.id.tv_name, cache.getBusName());
                 holder.setText(R.id.tv_address, cache.getOriginationStation() + "--" + cache.getTerminusStation());
                 holder.setOnClickListener(R.id.ll_search_address, new View.OnClickListener() {
                     @Override
