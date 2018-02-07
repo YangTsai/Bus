@@ -31,6 +31,7 @@ import java.util.TimerTask;
  */
 
 public class MainActivity extends BaseActivity {
+    public static final String tag = "MainActivity";
     private boolean isExit;
     //   为每个fragment设置标签
     private LinearLayout ll_home;
@@ -48,7 +49,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        LocationUtil.getIns(this).setLocation(getClass().getName(), true);
+        LocationUtil.getIns(this).setLocation(tag, true);
     }
 
     @Override
@@ -140,13 +141,17 @@ public class MainActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SetPointEvent event) {
-        if (event != null && event.getTag().equals(getClass().getName())) {
+        if (event != null && event.getTag().equals(tag)) {
             //MainActivity的回调
             homeFragment.setLocation(event);
             mapFragment.setLocation(event);
-        } else if (event != null && event.getTag().equals(routeFragment.getClass().getName())) {
+        } else if (event != null && event.getTag().equals(routeFragment.tag)) {
             //RouteFragment的回调
-            routeFragment.setLocation(event);
+            if (event.getType() == null) {
+                routeFragment.setHistoryLocation(event);
+            } else {
+                routeFragment.setLocation(event);
+            }
         }
     }
 

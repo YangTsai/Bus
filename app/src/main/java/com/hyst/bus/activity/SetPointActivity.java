@@ -35,7 +35,7 @@ import java.util.List;
  */
 
 public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSearchListener {
-
+    public static final String tag = "SetPointActivity";
     private ImageView iv_back;
     private EditText et_location;
     private ImageView iv_clear;
@@ -47,7 +47,7 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
     private List<PoiItem> data;
     //
     private String pointType;
-    private String tag;
+    private String otherTag;
 
 
     @Override
@@ -102,7 +102,7 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
     @Override
     protected void initData() {
         pointType = getIntent().getStringExtra(Constant.POINT_TYPE);
-        tag = getIntent().getStringExtra(Constant.POINT_TAG);
+        otherTag = getIntent().getStringExtra(Constant.POINT_TAG);
         et_location.setHint(pointType);
         //
         data = new ArrayList<>();
@@ -114,7 +114,7 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
                 holder.setOnClickListener(R.id.ll_point, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        EventBus.getDefault().post(new SetPointEvent(tag, pointType, poiItem.getTitle(), poiItem.getLatLonPoint()));
+                        EventBus.getDefault().post(new SetPointEvent(otherTag, pointType, poiItem.getTitle(), poiItem.getLatLonPoint()));
                         finish();
                     }
                 });
@@ -147,14 +147,14 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
                 et_location.setText("");
                 break;
             case R.id.tv_location:
-                LocationUtil.getIns(this).setLocation(getClass().getName(), true);
+                LocationUtil.getIns(this).setLocation(tag, true);
                 break;
             case R.id.iv_back:
                 finish();
                 break;
             case R.id.tv_map_location:
                 Intent intent = new Intent(this,MapPointActivity.class);
-                intent.putExtra("tag",getClass().getName());
+                intent.putExtra("tag",tag);
                 startActivity(intent);
                 break;
         }
@@ -162,18 +162,18 @@ public class SetPointActivity extends BaseActivity implements PoiSearch.OnPoiSea
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SetPointEvent event) {
-        if (event != null && event.getTag().equals(getClass().getName())) {
+        if (event != null && event.getTag().equals(tag)) {
             et_location.setText("我的位置");
-            EventBus.getDefault().post(new SetPointEvent(tag, pointType, "我的位置", event.getLatLonPoint()));
+            EventBus.getDefault().post(new SetPointEvent(otherTag, pointType, "我的位置", event.getLatLonPoint()));
             finish();
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PoiItemEvent event) {
-        if (event != null && event.getTag().equals(getClass().getName())) {
+        if (event != null && event.getTag().equals(tag)) {
             et_location.setText(event.getPoiItem().getTitle());
-            EventBus.getDefault().post(new SetPointEvent(tag, pointType, event.getPoiItem().getTitle(), event.getPoiItem().getLatLonPoint()));
+            EventBus.getDefault().post(new SetPointEvent(otherTag, pointType, event.getPoiItem().getTitle(), event.getPoiItem().getLatLonPoint()));
             finish();
         }
     }

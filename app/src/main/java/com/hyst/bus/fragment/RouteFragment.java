@@ -18,7 +18,9 @@ import com.hyst.bus.dialog.DeleteDialog;
 import com.hyst.bus.model.RecyclerHolder;
 import com.hyst.bus.model.cache.RouteCache;
 import com.hyst.bus.model.event.SetPointEvent;
+import com.hyst.bus.util.LocationUtil;
 import com.hyst.bus.util.RouteCacheUtil;
+import com.hyst.bus.util.ToastUtil;
 import com.hyst.bus.util.ViewUtil;
 import com.liaoinstan.springview.container.AliHeader;
 import com.liaoinstan.springview.widget.SpringView;
@@ -30,6 +32,7 @@ import java.util.List;
  */
 
 public class RouteFragment extends BaseFragment {
+    public static final String tag = "RouteFragment";
     private TextView tv_start;
     private TextView tv_end;
     private TextView tv_clear;
@@ -42,6 +45,9 @@ public class RouteFragment extends BaseFragment {
     private RecyclerAdapter adapter;
     private List<RouteCache> data;
     private DeleteDialog deleteDialog;
+
+    //
+    private RouteCache routeCache;
 
     @Override
     protected int setLayoutId() {
@@ -92,16 +98,21 @@ public class RouteFragment extends BaseFragment {
                 holder.setOnClickListener(R.id.tv_name, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(context, RoutePlanActivity.class);
-                        Bundle bundle = new Bundle();
-                        SetPointEvent startPoint = new SetPointEvent(getClass().getName(), Constant.POINT_TYPE_START_VALUE,
-                                cache.getStartContent(), new LatLonPoint(cache.getStartLat(), cache.getStartLon()));
-                        SetPointEvent endPoint = new SetPointEvent(getClass().getName(), Constant.POINT_TYPE_END_VALUE,
-                                cache.getEndContent(), new LatLonPoint(cache.getEndLat(), cache.getEndLon()));
-                        bundle.putParcelable("startPoint", startPoint);
-                        bundle.putParcelable("endPoint", endPoint);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
+                        if (cache.getStartContent().equals("我的位置") || cache.getEndContent().equals("我的位置")) {
+                            routeCache = cache;
+                            LocationUtil.getIns(context).setLocation(tag, true);
+                        } else {
+                            Intent intent = new Intent(context, RoutePlanActivity.class);
+                            Bundle bundle = new Bundle();
+                            SetPointEvent startPoint = new SetPointEvent(tag, Constant.POINT_TYPE_START_VALUE,
+                                    cache.getStartContent(), new LatLonPoint(cache.getStartLat(), cache.getStartLon()));
+                            SetPointEvent endPoint = new SetPointEvent(tag, Constant.POINT_TYPE_END_VALUE,
+                                    cache.getEndContent(), new LatLonPoint(cache.getEndLat(), cache.getEndLon()));
+                            bundle.putParcelable("startPoint", startPoint);
+                            bundle.putParcelable("endPoint", endPoint);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                        }
                     }
                 });
             }
@@ -109,6 +120,7 @@ public class RouteFragment extends BaseFragment {
         recyclerView = ViewUtil.getVRowsNoLine(context, recyclerView, 1);
         recyclerView.setAdapter(adapter);
     }
+
 
     private void updateData() {
         data = RouteCacheUtil.getCache(context);
@@ -120,7 +132,39 @@ public class RouteFragment extends BaseFragment {
         adapter.setDatas(data);
     }
 
+    /**
+     * 历史记录存在“我的位置”的情况，需要重新定位后再规划路线方案
+     *
+     * @param event 定位结果
+     */
+    public void setHistoryLocation(SetPointEvent event) {
+        if (event.getLatLonPoint() == null) {
+            ToastUtil.show(context, "定位失败，请检查网络和定位权限");
+        }
+        SetPointEvent startPoint = new SetPointEvent(tag, Constant.POINT_TYPE_START_VALUE,
+                routeCache.getStartContent(), new LatLonPoint(routeCache.getStartLat(), routeCache.getStartLon()));
+        SetPointEvent endPoint = new SetPointEvent(tag, Constant.POINT_TYPE_END_VALUE,
+                routeCache.getEndContent(), new LatLonPoint(routeCache.getEndLat(), routeCache.getEndLon()));
+        Intent intent = new Intent(context, RoutePlanActivity.class);
+        Bundle bundle = new Bundle();
+        if (event.getLatLonPoint() != null && routeCache.getStartContent().equals("我的位置")) {
+            startPoint = new SetPointEvent(tag, Constant.POINT_TYPE_START_VALUE,
+                    routeCache.getStartContent(), event.getLatLonPoint());
+        } else if (event.getLatLonPoint() != null && routeCache.getEndContent().equals("我的位置")) {
+            endPoint = new SetPointEvent(tag, Constant.POINT_TYPE_END_VALUE,
+                    routeCache.getEndContent(), event.getLatLonPoint());
+        }
+        bundle.putParcelable("startPoint", startPoint);
+        bundle.putParcelable("endPoint", endPoint);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
 
+    /**
+     * 设置正常起点终点，规划路线方案
+     *
+     * @param event 位置信息
+     */
     public void setLocation(SetPointEvent event) {
         if (event.getType().equals(Constant.POINT_TYPE_START_VALUE)) {
             tv_start.setText(event.getContent());
@@ -164,13 +208,13 @@ public class RouteFragment extends BaseFragment {
             case R.id.tv_start:
                 intent = new Intent(context, SetPointActivity.class);
                 intent.putExtra(Constant.POINT_TYPE, Constant.POINT_TYPE_START_VALUE);
-                intent.putExtra(Constant.POINT_TAG, getClass().getName());
+                intent.putExtra(Constant.POINT_TAG, tag);
                 startActivity(intent);
                 break;
             case R.id.tv_end:
                 intent = new Intent(context, SetPointActivity.class);
                 intent.putExtra(Constant.POINT_TYPE, Constant.POINT_TYPE_END_VALUE);
-                intent.putExtra(Constant.POINT_TAG, getClass().getName());
+                intent.putExtra(Constant.POINT_TAG, tag);
                 startActivity(intent);
                 break;
             case R.id.tv_clear:
@@ -186,4 +230,6 @@ public class RouteFragment extends BaseFragment {
         adapter.setDatas(data);
         tv_clear.setText("暂无历史记录");
     }
+
+
 }

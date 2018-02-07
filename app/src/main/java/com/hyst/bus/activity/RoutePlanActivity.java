@@ -43,6 +43,7 @@ import java.util.List;
  */
 
 public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRouteSearchListener {
+    public static final String tag = "RoutePlanActivity";
     private TextView tv_start;
     private TextView tv_end;
     private ImageView iv_back;
@@ -103,7 +104,6 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
         if (startPoint == null && endPoint == null) {
             return;
         }
-        RouteCacheUtil.setCache(this, startPoint, endPoint);
         tv_start.setText(startPoint.getContent());
         tv_end.setText(endPoint.getContent());
         data = new ArrayList<>();
@@ -168,13 +168,13 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
             case R.id.tv_start:
                 intent = new Intent(this, SetPointActivity.class);
                 intent.putExtra(Constant.POINT_TYPE, Constant.POINT_TYPE_START_VALUE);
-                intent.putExtra(Constant.POINT_TAG, getClass().getName());
+                intent.putExtra(Constant.POINT_TAG, tag);
                 startActivity(intent);
                 break;
             case R.id.tv_end:
                 intent = new Intent(this, SetPointActivity.class);
                 intent.putExtra(Constant.POINT_TYPE, Constant.POINT_TYPE_END_VALUE);
-                intent.putExtra(Constant.POINT_TAG, getClass().getName());
+                intent.putExtra(Constant.POINT_TAG, tag);
                 startActivity(intent);
                 break;
             case R.id.tv_route_choose:
@@ -274,6 +274,7 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
     public void onBusRouteSearched(BusRouteResult result, int errorCode) {
         if (errorCode == AMapException.CODE_AMAP_SUCCESS) {
             if (result != null && result.getPaths() != null && result.getPaths().size() > 0) {
+                RouteCacheUtil.setCache(this, startPoint, endPoint);
                 mBusRouteResult = result;
                 data = result.getPaths();
                 adapter.setDatas(result.getPaths());
@@ -290,7 +291,7 @@ public class RoutePlanActivity extends BaseActivity implements RouteSearch.OnRou
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SetPointEvent event) {
-        if (event != null && event.getTag().equals(getClass().getName())) {
+        if (event != null && event.getTag().equals(tag)) {
             if (event.getType().equals(Constant.POINT_TYPE_START_VALUE)) {
                 tv_start.setText(event.getContent());
                 startPoint = event;
