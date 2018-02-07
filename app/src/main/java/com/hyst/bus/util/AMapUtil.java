@@ -89,6 +89,7 @@ public class AMapUtil {
         }
         return lineShapes;
     }
+
     public static String getFriendlyLength(int lenMeter) {
         if (lenMeter > 10000) // 10 km
         {
@@ -115,6 +116,7 @@ public class AMapUtil {
 
         return dis + ChString.Meter;
     }
+
     /**
      * long类型时间格式化
      */
@@ -142,6 +144,7 @@ public class AMapUtil {
 
     /**
      * 获取公交方案
+     *
      * @param busPath
      * @return
      */
@@ -180,6 +183,7 @@ public class AMapUtil {
 
     /**
      * 获取录像详情
+     *
      * @param busPath
      * @return
      */
@@ -187,13 +191,14 @@ public class AMapUtil {
         if (busPath == null) {
             return String.valueOf("");
         }
+        float cost = busPath.getCost();
         long second = busPath.getDuration();
         String time = getFriendlyTime((int) second);
         float subDistance = busPath.getDistance();
         String subDis = getFriendlyLength((int) subDistance);
         float walkDistance = busPath.getWalkDistance();
         String walkDis = getFriendlyLength((int) walkDistance);
-        return String.valueOf(time + " | " + subDis + " | 步行" + walkDis);
+        return String.valueOf(cost + "元 | " + time + " | " + subDis + " | 步行" + walkDis);
     }
 
     public static String getSimpleBusLineName(String busLineName) {
