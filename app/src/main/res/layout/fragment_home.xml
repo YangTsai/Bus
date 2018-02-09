@@ -16,6 +16,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
             android:text="切换"
+            android:visibility="gone"
             android:textColor="@color/white" />
 
         <TextView
