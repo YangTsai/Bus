@@ -2,6 +2,9 @@ package com.hyst.bus.fragment.routeplan;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -126,7 +129,15 @@ public class RoutePlanFragment extends BaseLazyFragment {
                     if (step.isWalk() && step.getWalk() != null && step.getWalk().getDistance() > 0) {
                         //步行路线
                         holder.setImageResource(R.id.iv_type, R.drawable.ic_man);
-                        holder.setText(R.id.tv_name, "步行" + (int) step.getWalk().getDistance() + "米");
+                        if ((int) step.getWalk().getDistance() > 200) {
+                            holder.setText(R.id.tv_name, "步行" + (int) step.getWalk().getDistance() + "米" + "                                    共享单车");
+                            String text = ((TextView) holder.getView(R.id.tv_name)).getText().toString();
+                            SpannableStringBuilder ssb = new SpannableStringBuilder(text);
+                            ssb.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorTheme)), text.length() - 4, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            ((TextView) holder.getView(R.id.tv_name)).setText(ssb);
+                        } else {
+                            holder.setText(R.id.tv_name, "步行" + (int) step.getWalk().getDistance() + "米");
+                        }
                     } else if (step.isBus() && step.getBusLines().size() > 0) {
                         //公交路线
                         holder.setImageResource(R.id.iv_type, R.drawable.ic_bus);

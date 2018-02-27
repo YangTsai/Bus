@@ -10,6 +10,11 @@ import android.widget.TextView;
 
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.services.busline.BusLineItem;
+import com.amap.api.services.busline.BusLineQuery;
+import com.amap.api.services.busline.BusLineResult;
+import com.amap.api.services.busline.BusLineSearch;
+import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.poisearch.PoiResult;
@@ -39,7 +44,7 @@ import java.util.List;
  * Created by Administrator on 2018/1/16.
  */
 
-public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchListener {
+public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchListener, BusLineSearch.OnBusLineSearchListener {
 
     private SpringView springView;
     private EditText et_bus;
@@ -62,6 +67,9 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
     private DeleteDialog deleteDialog;
 
     private LatLng latLng;
+    //
+    private BusLineQuery busLineQuery;
+    private BusLineSearch busLineSearch;
 
     @Override
     protected int setLayoutId() {
@@ -137,10 +145,10 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
                     holder.getView(R.id.rl_address).setVisibility(View.GONE);
                 }
                 float distance = AMapUtils.calculateLineDistance(info.getLatLng(), latLng);
-                if(distance > 1000){
+                if (distance > 1000) {
                     holder.setText(R.id.tv_distance, "大于1000米");
-                }else {
-                    holder.setText(R.id.tv_distance, (int)distance + "米");
+                } else {
+                    holder.setText(R.id.tv_distance, (int) distance + "米");
                 }
                 holder.setText(R.id.tv_station_name, info.getStationName());
                 holder.setText(R.id.tv_bus_name, info.getBusName());
@@ -202,9 +210,7 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
         switch (view.getId()) {
             case R.id.tv_query_bus:
                 if (!TextUtils.isEmpty(et_bus.getText().toString())) {
-                    intent = new Intent(context, StationDetailActivity.class);
-                    intent.putExtra("bus", et_bus.getText().toString());
-                    startActivity(intent);
+                    searchBusLine();
                 } else {
                     ToastUtil.show(context, "请输入公交号");
                 }
@@ -221,6 +227,15 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
         }
     }
 
+    private void searchBusLine() {
+        LocationCache locationCache = LocationUtil.getIns(context).getCurrentLocation();
+        busLineQuery = new BusLineQuery(et_bus.getText().toString(), BusLineQuery.SearchType.BY_LINE_NAME, locationCache.getCityName());
+        busLineQuery.setPageSize(10);
+        busLineQuery.setPageNumber(1);
+        busLineSearch = new BusLineSearch(context, busLineQuery);
+        busLineSearch.setOnBusLineSearchListener(this);
+        busLineSearch.searchBusLineAsyn();
+    }
 
     public void delete() {
         data.clear();
@@ -269,4 +284,30 @@ public class HomeFragment extends BaseFragment implements PoiSearch.OnPoiSearchL
 
     }
 
+    @Override
+    public void onBusLineSearched(BusLineResult result, int rCode) {
+        if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+            if (result != null && result.getQuery() != null) {
+                if (result.getQuery().getCategory() == BusLineQuery.SearchType.BY_LINE_NAME) {
+                    if (result.getPageCount() > 0 && result.getBusLines() != null && result.getBusLines().size() > 0) {
+                        List<BusLineItem> lines = result.getBusLines();
+                        if (lines == null && lines.size() == 0) {
+                            ToastUtil.show(context, R.string.no_result);
+                        }
+                        Intent intent = new Intent(context, StationDetailActivity.class);
+                        intent.putExtra("bus", et_bus.getText().toString());
+                        startActivity(intent);
+                    } else {
+                        ToastUtil.show(context, R.string.no_result);
+                    }
+                } else {
+                    ToastUtil.show(context, R.string.no_result);
+                }
+            } else {
+                ToastUtil.show(context, R.string.no_result);
+            }
+        } else {
+            ToastUtil.show(context, rCode);
+        }
+    }
 }

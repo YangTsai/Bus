@@ -61,7 +61,7 @@
                 android:layout_marginLeft="30dp"
                 android:background="@color/transparent"
                 android:gravity="center_vertical"
-                android:hint="查询公交、站点、线路"
+                android:hint="查询公交"
                 android:singleLine="true" />
 
             <TextView
